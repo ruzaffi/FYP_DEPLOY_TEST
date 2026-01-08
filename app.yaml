@@ -1,0 +1,28 @@
+runtime: nodejs20
+# FORCING UPLOAD 20251021T2049
+
+env_variables:
+  # Cloud SQL Connection Variables (Verified as correct)
+  DB_USER: "fyp_user"
+  DB_PASSWORD: "FYP_S3cur3_D@tA_2025!"
+  DB_NAME: "final_project_db"
+  INSTANCE_CONNECTION_NAME: "gentle-dominion-474410-t3:us-central1:mysql-sandbox-dev"
+  JWT_SECRET: "3a32982656311170749e2aae73c5b33f7784c66e1bc1364e8a35f7f203a5b172d21d290d71da0f39c728cca4eb67a93a0261ae1e925eafceace6210cf22cf0de"
+  MAIL_USER: "mruzaffi4812@gmail.com"
+  MAIL_PASS: "nxcf xwly tsdb nffa"
+
+beta_settings:
+  cloud_sql_instances: "gentle-dominion-474410-t3:us-central1:mysql-sandbox-dev"
+
+handlers:
+- url: /api/.*
+  script: auto
+  secure: always
+
+- url: /
+  static_files: public/index.html
+  upload: public/index.html
+
+- url: /(.*)
+  static_files: public/\1
+  upload: public/(.*)

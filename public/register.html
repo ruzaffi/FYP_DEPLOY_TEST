@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"
+/>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0" />
+<title>Smart
+Expenses AI — Register</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/*
+------------------------------------- */
+/* Clean CSS +
+Password Toggle Fixed */
+/*
+------------------------------------- */
+body {
+  font-family:
+'Segoe UI', Arial, sans-serif;
+  background:
+#F4F1ED;
+  height: 100vh;
+  margin: 0;
+  display:
+flex;
+  justify-content:
+center;
+  align-items:
+center;
+  color: #4E5E6C;
+}
+ 
+.card {
+  background:
+#FFFFFF;
+  padding:
+45px;
+  border-radius:
+18px;
+  text-align:
+center;
+  box-shadow:
+0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  border: 1px
+solid #E8E5E2;
+  animation:
+fadeIn 1.2s ease-in-out;
+}
+ 
+h1 {
+  color: #4E5E6C;
+  font-size:
+26px;
+  font-weight:
+700;
+  letter-spacing:
+0.5px;
+  margin-bottom:
+5px;
+  margin-top:
+0;
+}
+ 
+p {
+  color: #748492;
+  font-size:
+16px;
+  margin-bottom:
+30px;
+  margin-top:
+10px;
+}
+ 
+input[type="text"],
+input[type="email"],
+input[type="password"]
+{
+  width: 100%;
+  padding:
+12px 40px 12px 12px;
+  margin: 10px
+0;
+  border: 1px
+solid #D0D0D0;
+  border-radius:
+12px;
+  background:
+#FAFAFA;
+  color: #4E5E6C;
+  outline:
+none;
+  box-sizing:
+border-box;
+  transition:
+0.2s;
+}
+ 
+input:focus {
+  border-color:
+#9EC3B5;
+  box-shadow:
+0 0 0 3px rgba(158, 195, 181, 0.3);
+  background:
+#FFFFFF;
+}
+ 
+.password-container
+{
+  position:
+relative;
+}
+ 
+.toggle-eye {
+  position:
+absolute;
+  right: 12px;
+  top: 50%;
+  transform:
+translateY(-50%);
+  cursor: pointer;
+  user-select:
+none;
+  font-size:
+18px;
+  color: #9EC3B5;
+}
+ 
+.password-hints
+{
+  text-align:
+left;
+  font-size:
+13px;
+  color: #748492;
+  background:
+#FAFAFA;
+  border: 1px
+solid #D0D0D0;
+  border-radius:
+8px;
+  padding:
+10px;
+  margin: 5px
+0 15px 0;
+  line-height:
+1.4;
+  display:
+none;
+}
+ 
+.password-hints
+span {
+  display:
+block;
+  margin-bottom:
+4px;
+}
+ 
+.password-hints
+.valid {
+  color: green;
+}
+ 
+.password-hints
+.invalid {
+  color: red;
+}
+ 
+button {
+width: 100%;
+padding: 14px;
+border: none;
+border-radius: 12px;
+font-size: 16px;
+font-weight: bold;
+cursor: pointer;
+margin: 15px 0 8px 0;
+color: #FFFFFF;
+background: #6CA08D; 
+transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+ 
+button:hover {
+transform: translateY(-1px);
+background: #5F8E7D; 
+box-shadow: 0 4px 14px rgba(108, 160, 141, 0.4); /* Used a darker shadow to match */
+}
+
+button:disabled {
+background: #B9C3C9;
+cursor: not-allowed;
+transform: none;
+box-shadow: none;
+}
+ 
+.switch {
+  margin-top:
+20px;
+  color: #748492;
+  cursor: pointer;
+  font-size:
+14px;
+  transition:
+0.2s;
+}
+ 
+.switch:hover {
+  color: #4E5E6C;
+}
+ 
+@keyframes fadeIn
+{
+  from { opacity:
+0; transform: translateY(-10px); }
+  to { opacity:
+1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Create
+Account</h1>
+    <p>Start
+your Smart Expense journey today</p>
+ 
+    <input
+type="text" id="registerName" placeholder="Full name" required>
+    <input
+type="email" id="registerEmail" placeholder="Email address" required>
+ 
+    <div
+class="password-container">
+   
+      <input type="password" id="registerPassword" placeholder="Password"
+required>
+    
+      <span class="toggle-eye" id="toggleRegisterPassword"><i
+class="fas fa-eye-slash"></i></span>
+    </div>
+ 
+    <div
+class="password-hints" id="passwordHints">
+   
+      <span id="hintLength" class="invalid">• At
+least 8 characters</span>
+    
+      <span id="hintUpper" class="invalid">• One
+uppercase letter</span>
+    
+      <span id="hintLower" class="invalid">• One
+lowercase letter</span>
+    
+      <span id="hintNumber" class="invalid">• One
+number</span>
+    
+      <span id="hintSpecial" class="invalid">• One special character (!@#$%^&* etc.)</span>
+    </div>
+ 
+    <div
+class="password-container">
+   
+      <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+    
+      <span class="toggle-eye" id="toggleConfirmPassword"><i
+class="fas fa-eye-slash"></i></span>
+    </div>
+ 
+    <button
+id="registerBtn">Register</button>
+    <div
+class="switch" onclick="window.location.href='login.html'">Already
+have an account? Login</div>
+  </div>
+ 
+<script>
+// Base URL for your deployed API on App Engine (Cloud SQL connection is behind this endpoint)
+const API_BASE_URL = "https://gentle-dominion-474410-t3.as.r.appspot.com";
+
+const ICON_HIDDEN_CLASS = "fas fa-eye-slash";
+const ICON_VISIBLE_CLASS = "fas fa-eye";
+ 
+// --- Password Toggle Logic ---
+function setupToggle(inputId, toggleId) {
+  const input = document.getElementById(inputId);
+  const toggle = document.getElementById(toggleId);
+  const toggleIcon = toggle.querySelector('i');
+ 
+  toggleIcon.className = ICON_HIDDEN_CLASS;
+ 
+  toggle.addEventListener("click", () => {
+    const type = input.type === "password" ? "text" : "password";
+    input.type = type;
+    toggleIcon.className = type === "password" ? ICON_HIDDEN_CLASS : ICON_VISIBLE_CLASS;
+  });
+}
+ 
+setupToggle("registerPassword", "toggleRegisterPassword");
+setupToggle("confirmPassword", "toggleConfirmPassword");
+ 
+// --- Password Hint/Validation Logic ---
+const registerPassword = document.getElementById("registerPassword");
+const passwordHints = document.getElementById("passwordHints");
+const registerBtn = document.getElementById("registerBtn");
+const confirmPassword = document.getElementById("confirmPassword");
+
+const hints = {
+  length: document.getElementById("hintLength"),
+  upper: document.getElementById("hintUpper"),
+  lower: document.getElementById("hintLower"),
+  number: document.getElementById("hintNumber"),
+  special: document.getElementById("hintSpecial")
+};
+ 
+// Shows password hints on focus
+registerPassword.addEventListener("focus", () => {
+  passwordHints.style.display = "block";
+});
+
+// Live validation state
+let allRequirementsMet = false;
+
+// Updates password validation hints on input
+registerPassword.addEventListener("input", () => {
+  const val = registerPassword.value;
+  const checks = {
+    length: val.length >= 8,
+    upper: /[A-Z]/.test(val),
+    lower: /[a-z]/.test(val),
+    number: /[0-9]/.test(val),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+  };
+
+  hints.length.className = checks.length ? "valid" : "invalid";
+  hints.upper.className = checks.upper ? "valid" : "invalid";
+  hints.lower.className = checks.lower ? "valid" : "invalid";
+  hints.number.className = checks.number ? "valid" : "invalid";
+  hints.special.className = checks.special ? "valid" : "invalid";
+
+  // Check if all requirements are met
+  allRequirementsMet = Object.values(checks).every(check => check === true);
+});
+ 
+// --- Registration API Call Logic ---
+registerBtn.addEventListener("click", async () => {
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const pass = registerPassword.value;
+  const confirm = confirmPassword.value;
+  
+  registerBtn.disabled = true; // Disable button to prevent double-click
+
+  if (!name || !email || !pass || !confirm) {
+    registerBtn.disabled = false;
+    return alert("Please fill out all fields.");
+  }
+
+  if (pass !== confirm) {
+    registerBtn.disabled = false;
+    return alert("Passwords do not match!");
+  }
+
+  if (!email.includes('@') || !email.includes('.')) {
+    registerBtn.disabled = false;
+    return alert("Please enter a valid email address.");
+  }
+
+  // Check the password strength validation state
+  if (!allRequirementsMet) {
+    registerBtn.disabled = false;
+    return alert("Password does not meet all requirements.");
+  }
+ 
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, pass })
+    });
+ 
+    const data = await res.json();
+ 
+    if (res.ok && data.success) { // Check for a successful response and API message
+      alert("Registration successful! Please log in now.");
+      window.location.href = "login.html";
+    }
+    else {
+      // Handles errors like "Email already registered" from the backend
+      alert("Error: " + (data.message || "Registration failed."));
+    }
+  } catch (err) {
+    alert("Server connection failed. Please check the network.");
+    console.error("Registration Error:", err);
+  } finally {
+      registerBtn.disabled = false; // Re-enable button regardless of success/fail
+  }
+});
+</script>
+</body>
+</html>

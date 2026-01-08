@@ -1,0 +1,21 @@
+{
+  "name": "smart-expenses-api",
+  "version": "1.0.0",
+  "description": "Backend API for SmartExpense – AI Monthly Budget Advisor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "googleapis": "^164.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "nodemailer": "^7.0.9"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

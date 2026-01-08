@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Step 1: Budget Setup — SmartExpense AI</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+    /* ------------------------------------- */
+    /* GLOBAL COLOR PALETTE (Based on user's style.css) */
+    /* ------------------------------------- */
+    :root {
+        --bg-light: #F4F1ED;
+        --card-bg: #FFFFFF;
+        --text-primary: #4E5E6C;
+        --text-secondary: #748492;
+        --accent-sage: #9EC3B5;
+        --accent-sage-hover: #8CB4A6;
+        
+        /* Requested Dark Sidebar Overrides */
+        --sidebar-dark: #2C3E50; 
+        --sidebar-link-light: #ECF0F1; /* Light text for contrast */
+        --sidebar-active-bg: #34495E;
+
+        /* New Red Color for Logout Button (Danger/Action) */
+        --text-danger: #E74C3C; 
+    }
+
+    /* ------------------------------------- */
+    /* BASE STYLES */
+    /* ------------------------------------- */
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: var(--bg-light); 
+        margin: 0;
+        padding: 0;
+        color: var(--text-primary); 
+        overflow-x: hidden;
+        /* Required for dashboard layout */
+        display: flex; 
+    }
+
+    /* Styles for h1, h2, h3, h4 */
+    h1, h2, h3, h4 {
+        color: var(--text-primary);
+        line-height: 1.2;
+    }
+
+    /* Styles for p */
+    p {
+        color: var(--text-secondary); 
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    /* Common CTA Button Styling */
+.main-cta { padding: 16px; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; margin: 8px 0; color: #FFF; background: #6CA08D; transition: all 0.2s; }
+.main-cta:hover { transform: translateY(-2px); background: #5F8E7D; box-shadow: 0 4px 16px rgba(108, 160, 141, 0.4); }
+
+
+
+    /* ------------------------------------- */
+    /* SIDEBAR STYLES (OVERRIDDEN TO DARK) */
+    /* ------------------------------------- */
+
+    /* Sidebar - Now dark as requested */
+     .sidebar {
+        width: 250px; 
+        background: var(--sidebar-dark); /* Dark Color Applied */
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 30px;
+        box-shadow: 2px 0 6px rgba(0,0,0,0.1); 
+        z-index: 100;
+    }
+.logo-sidebar { 
+    font-size: 20px; font-weight: bold; color: #ECF0F1;
+    display: flex; /* CHANGE: Use flex to align image and text horizontally */
+    align-items: center; /* NEW: Vertically center the image and text */
+    margin: 0 20px 30px 20px; 
+    border-bottom: 1px solid #4A637F;
+    padding-bottom: 20px; 
+}
+.logo-sidebar img {
+    width: 30px; 
+    height: 30px;
+    object-fit: contain; 
+    vertical-align: middle; 
+    margin-right: 10px; /* NEW: Add space between the image and the text */
+}
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        color: var(--sidebar-link-light); /* Light text for dark sidebar */
+        padding: 15px 20px;
+        text-decoration: none;
+        font-size: 16px;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .sidebar a i {
+        font-size: 18px;
+        width: 30px;
+        text-align: center;
+        color: var(--sidebar-link-light); /* Light icon color */
+    }
+    
+    /* LOGOUT LINK STYLES (New Red Styling) */
+    .sidebar a.logout-link {
+        color: var(--text-danger); /* Red text */
+        font-weight: bold;
+    }
+
+    .sidebar a.logout-link i {
+        color: var(--text-danger); /* Red icon */
+    }
+
+    .sidebar a.logout-link:hover {
+        background: var(--sidebar-active-bg); 
+        color: #FFFFFF; /* White text on dark hover */
+        border-left: 4px solid var(--text-danger); /* Red border on hover */
+    }
+    /* END LOGOUT STYLES */
+
+
+    .sidebar a:hover:not(.logout-link) {
+        background: var(--sidebar-active-bg); /* Darker hover background */
+        color: #FFFFFF; /* White on hover */
+        border-left: 4px solid var(--accent-sage);
+    }
+
+    .sidebar a:hover:not(.logout-link) i {
+        color: var(--accent-sage);
+    }
+
+    .sidebar a.active {
+        background: var(--sidebar-active-bg); /* Darker active background */
+        color: #FFFFFF;
+        font-weight: bold;
+        border-left: 4px solid var(--accent-sage);
+    }
+
+    .sidebar a.active i {
+        color: var(--accent-sage); 
+    }
+
+    .sidebar hr {
+        border-color: rgba(255, 255, 255, 0.1); 
+        margin: 20px 20px;
+    }
+
+
+    /* Main Content */
+    .content {
+        margin-left: 250px; 
+        flex: 1;
+        min-height: 100vh;
+    }
+
+    .main-container {
+        max-width: 700px; 
+        margin: 0 auto; 
+        padding: 40px; 
+    }
+
+    /* General Card Style for internal pages */
+    .card {
+        background: var(--card-bg); 
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+
+    /* Form/Input Styles for internal pages */
+    .card label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .card input[type="number"], 
+    .card input[type="text"] {
+        width: 100%; 
+        padding: 12px;
+        margin-top: 0;
+        border-radius: 8px;
+        border: 1px solid #D0D0D0;
+        background: #FAFAFA; 
+        color: var(--text-primary);
+        font-size: 16px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-sizing: border-box; 
+    }
+
+    .card input:focus {
+        outline: none;
+        border-color: var(--accent-sage); 
+        box-shadow: 0 0 0 3px rgba(158, 195, 181, 0.5); 
+        background: #FFFFFF;
+    }
+
+    /* Override .main-cta button for forms */
+    .card .main-cta {
+        width: 100%; 
+        margin-top: 25px;
+    }
+    
+    /* PROGRESS BAR STYLES */
+    .progress-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        position: relative;
+        padding: 0 20px;
+    }
+
+    .progress-line {
+        position: absolute;
+        height: 4px;
+        background: #E0E0E0;
+        width: 80%; 
+        left: 10%;
+        z-index: 1;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--accent-sage); 
+        transition: width 0.4s ease-in-out;
+    }
+
+    .progress-step {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #E0E0E0;
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        border: 2px solid #D0D0D0;
+        z-index: 2;
+        transition: all 0.3s;
+    }
+
+    .progress-step.active {
+        background: var(--accent-sage); 
+        color: #FFFFFF;
+        border-color: var(--accent-sage);
+    }
+
+    .progress-step.done {
+        background: var(--accent-sage-hover); 
+        color: #FFFFFF;
+        border-color: var(--accent-sage-hover);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 70px;
+            padding-top: 10px;
+        }
+        .content {
+            margin-left: 70px;
+            padding: 20px 0; 
+        }
+        .logo-sidebar, .sidebar hr {
+            display: none; 
+        }
+        .sidebar a span {
+            display: none; 
+        }
+        .sidebar a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+        .sidebar a i {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body class="dashboard-layout">
+
+<div class="sidebar">
+    <a href="index.html" class="logo-sidebar">
+    <img src="logo.png" alt="SmartExpense AI Logo">
+    <span>SMART EXPENSES AI</span>
+    </a>
+        <a href="dashboard.html">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="setup.html" class="active">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Step 1: Budget Setup</span>
+        </a>
+        <a href="expenses.html">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Step 2: Daily Expenses</span>
+        </a>
+        <a href="savings.html">
+            <i class="fa-solid fa-sack-dollar"></i>
+            <span>Step 3: Savings Plan</span>
+        </a>
+        <hr>
+        <!-- Logout now uses the .logout-link class defined in CSS for red color -->
+        <a href="index.html" onclick="logout()" class="logout-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+<div class="content">
+    
+    <div class="main-container">
+
+        <h1> Budget Setup </h1>
+
+        <div class="progress-container">
+            <div class="progress-line">
+                <div class="progress-bar" style="width: 0%;"></div>
+            </div>
+            <div class="progress-step active">1</div>
+            <div class="progress-step">2</div>
+            <div class="progress-step">3</div>
+        </div>
+
+        <div class="card"> 
+            <form id="setupForm">
+                <h2>Your Core Budget Details</h2>
+                <p>Please enter your estimated monthly income and typical fixed expenses. This is the foundation for your financial dashboard.</p>
+                
+                <label for="income">
+                    Monthly Income (RM)
+                    <span class="info-tooltip" data-info="Enter your total net income (after taxes) you receive each month.">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </span>
+                </label>
+                <input id="income" type="number" min="0" required>
+                
+                <label for="rent">
+                    Rent (RM)
+                    <span class="info-tooltip" data-info="The fixed monthly amount paid for your accommodation. Enter 0 if none.">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </span>
+                </label>
+                <input id="rent" type="number" min="0">
+                
+                <label for="food">
+                    Fixed Food Budget (RM)
+                    <span class="info-tooltip" data-info="Estimate your total fixed monthly budget for groceries and dining out.">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </span>
+                </label>
+                <input id="food" type="number" min="0">
+                
+                <label for="internet">
+                    Internet & Utilities (RM)
+                    <span class="info-tooltip" data-info="The fixed monthly cost for internet, phone, and standard utilities.">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </span>
+                </label>
+                <input id="internet" type="number" min="0">
+                
+                <label for="others">
+                    Other Fixed Expenses (RM)
+                    <span class="info-tooltip" data-info="Any other recurring monthly costs like subscriptions or loan payments.">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </span>
+                </label>
+                <input id="others" type="number" min="0">
+                
+                <button type="submit" class="main-cta" style="width: 100%; margin-top: 25px;">
+                    Save & Continue to Step 2 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+    </div> 
+</div>
+
+<script>
+const API_BASE_URL = "https://gentle-dominion-474410-t3.as.r.appspot.com";
+
+/**
+ * Helper function to retrieve the token from storage (for security)
+ */
+function getToken() {
+    return sessionStorage.getItem('se_token') || localStorage.getItem('se_token');
+}
+
+(function(){
+    // --- 1. Authentication Check ---
+    const email = sessionStorage.getItem('se_current') || localStorage.getItem('se_remember');
+    if(!email) {
+        location.href = 'register.html'; 
+        return;
+    }
+
+    const user_id = sessionStorage.getItem('se_userId') || localStorage.getItem('se_userId');
+    const token = getToken();
+    const form = document.getElementById('setupForm');
+
+    // --- 2. Load existing data from DB ---
+    (async function loadSetup() {
+        if (!user_id || !token) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/budget/${user_id}`, {
+                headers: { 
+                    // CRUCIAL: Send the token for authentication
+                    "Authorization": `Bearer ${token}` 
+                }
+            });
+            
+            if (!res.ok) {
+                // If the API returns an error (e.g., 401 Unauthorized, 404 Not Found)
+                const errorData = await res.json();
+                console.error('API Error during load:', errorData.message);
+                return;
+            }
+
+            const data = await res.json();
+            if (data.budget) {
+                // Populate fields with retrieved data
+                document.getElementById('income').value = data.budget.income || '';
+                document.getElementById('rent').value = data.budget.rent || '';
+                document.getElementById('food').value = data.budget.food || '';
+                document.getElementById('internet').value = data.budget.internet || '';
+                document.getElementById('others').value = data.budget.others || '';
+            }
+        } catch(err) {
+            console.error('Failed to fetch setup from DB (Network or Parse Error)', err);
+            showToast('Could not connect to server to load data.', 'error');
+        }
+    })();
+
+    // --- 3. Save form to DB ---
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        // Re-check token before sending data
+        const token = getToken();
+        if (!user_id || !token) {
+            showToast('Authentication failed. Please log in again.', 'error');
+            return;
+        }
+
+        const data = {
+            income: Number(document.getElementById('income').value || 0),
+            rent: Number(document.getElementById('rent').value || 0),
+            food: Number(document.getElementById('food').value || 0),
+            internet: Number(document.getElementById('internet').value || 0),
+            others: Number(document.getElementById('others').value || 0)
+        };
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/budget/save`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    // CRUCIAL: Send the token for authentication
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ user_id, ...data })
+            });
+
+            if (res.ok) {
+                showToast('Budget Setup saved successfully! Proceeding to Step 2: Daily Expenses..', 'success');
+                setTimeout(() => { location.href = 'expenses.html'; }, 1000);
+            } else {
+                const errorData = await res.json();
+                showToast(errorData.message || 'Failed to save. Please try again.', 'error');
+            }
+        } catch(err) {
+            console.error('Failed to save budget setup (Network Error)', err);
+            showToast('Network error: Could not connect to the server to save data.', 'error');
+        }
+    });
+
+    // --- 4. Corrected Logout Function ---
+    window.logout = function() {
+        // Clear all session/local items related to login
+        sessionStorage.removeItem('se_current');
+        sessionStorage.removeItem('se_token');
+        sessionStorage.removeItem('se_userName');
+
+        localStorage.removeItem('se_remember');
+        localStorage.removeItem('se_token');
+        localStorage.removeItem('se_userId');
+        
+        // Remove local setup data
+        localStorage.removeItem('se_setup_' + email); 
+
+        showToast('You have successfully logged out.', 'info');
+        setTimeout(() => { location.href = 'register.html'; }, 500);
+    };
+
+})(); 
+
+// 🌿 Create toast container once (Needed for showToast to work)
+const toastContainer = document.createElement('div');
+toastContainer.id = 'toastContainer';
+toastContainer.style.position = 'fixed';
+toastContainer.style.bottom = '20px';
+toastContainer.style.right = '20px';
+toastContainer.style.zIndex = '9999';
+document.body.appendChild(toastContainer);
+
+// 🌿 Function to show toast (Needed for feedback)
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.padding = '14px 20px';
+    toast.style.marginTop = '10px';
+    toast.style.borderRadius = '8px';
+    toast.style.fontSize = '16px';
+    toast.style.color = '#fff';
+    toast.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+    toast.style.transition = 'all 0.5s ease';
+    toast.style.opacity = '0';
+    if (type === 'success') toast.style.background = '#6CA08D';
+    if (type === 'error') toast.style.background = '#E74C3C';
+    if (type === 'info') toast.style.background = '#3498DB';
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.style.opacity = '1', 50);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+}
+</script>
+</body>
+</html>

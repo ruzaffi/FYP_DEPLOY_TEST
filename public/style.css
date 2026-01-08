@@ -1,0 +1,655 @@
+/* ------------------------------------- */
+/* GLOBAL COLOR PALETTE */
+/* ------------------------------------- */
+/* Background: #F4F1ED (Very light, warm off-white) */
+/* Header/Card Background: #FFFFFF (White) */
+/* Primary Text: #4E5E6C (Deep Muted Blue-Gray) */
+/* Secondary Text/Links: #748492 (Lighter Muted Gray) */
+/* Sage Accent: #9EC3B5 (Soft Sage Green) */
+/* Sage Hover: #8CB4A6 (Darker Sage Green) */
+
+/* Add smooth scrolling behavior to the entire page */
+html {
+    -webkit-overflow-scrolling: touch; /* FIX: Added for compatibility and to remove warning */
+    scroll-behavior: smooth;
+}
+
+/* ------------------------------------- */
+/* BASE STYLES */
+/* ------------------------------------- */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #F4F1ED; 
+    margin: 0;
+    padding: 0;
+    color: #4E5E6C; 
+    overflow-x: hidden;
+}
+
+/* Styles for h1, h2, h3, h4 */
+h1, h2, h3, h4 {
+    color: #4E5E6C;
+    line-height: 1.2;
+}
+
+/* Styles for p */
+p {
+    color: #748492; 
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Common CTA Button Styling (used on index.html and setup.html form) */
+.main-cta {
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px 0;
+    color: #FFFFFF; /* White text for contrast */
+    background: #9EC3B5; /* Sage Green background */
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.main-cta:hover {
+    transform: translateY(-2px);
+    background: #8CB4A6; /* Darker Sage on Hover */
+    box-shadow: 0 4px 16px rgba(158, 195, 181, 0.5); 
+}
+
+
+/* ------------------------------------- */
+/* HEADER & NAVIGATION STYLES (Used on index.html) */
+/* ------------------------------------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: #FFFFFF; 
+    box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+    position: sticky; 
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4E5E6C;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #748492; 
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 16px;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #4E5E6C; 
+}
+
+/* Header CTA Button (Let's Get Started style) */
+.header button {
+    padding: 10px 20px;
+    margin: 0 0 0 25px; 
+    border-radius: 8px;
+    background: #9EC3B5; 
+    color: #4E5E6C; 
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: none; 
+    width: auto; 
+}
+
+.header button:hover {
+    background: #8CB4A6; 
+}
+
+
+/* ------------------------------------- */
+/* HERO LAYOUT STYLES (index.html) */
+/* ------------------------------------- */
+.hero-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 100px;
+    background: #F4F1ED; 
+}
+
+/* Text Content Area */
+.hero-content {
+    max-width: 50%; 
+    margin: 0;
+    padding-right: 50px;
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+.hero-content h1 {
+    font-size: 48px; 
+    margin-bottom: 25px;
+}
+
+/* Main CTA Button */
+.hero-content .main-cta {
+    width: 280px; 
+}
+
+/* Image Area */
+.hero-image-box {
+    max-width: 45%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 15px;
+    background: #F9F7F5;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+}
+
+
+/* ------------------------------------- */
+/* ABOUT SECTION STYLES (index.html) */
+/* ------------------------------------- */
+.about-section {
+    padding: 80px 100px;
+    background: #FFFFFF; 
+}
+
+.about-section h2, .about-section h3 {
+    margin-bottom: 25px;
+}
+
+.about-section .section-card {
+    background: #F9F7F5; 
+    border-radius: 14px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.feature {
+    background: #FFFFFF; 
+    border-radius: 10px;
+    padding: 25px;
+    text-align: left;
+    transition: transform 0.2s;
+    border: 1px solid #E0E0E0;
+}
+
+.feature:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.feature .icon-box {
+    font-size: 30px;
+    color: #9EC3B5; 
+    margin-bottom: 15px;
+}
+
+.feature h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.feature p {
+    font-size: 15px;
+    margin: 0;
+}
+
+/* ------------------------------------- */
+/* FOOTER (index.html) */
+/* ------------------------------------- */
+footer {
+    text-align: center;
+    padding: 30px 0;
+    background: #E8E5E2; 
+    color: #748492;
+    font-size: 14px;
+}
+
+/* ------------------------------------- */
+/* SIDEBAR & DASHBOARD STYLES (setup.html, expenses.html, etc.) */
+/* ------------------------------------- */
+/* Needed for sidebar layout */
+body.dashboard-layout {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px; 
+    background: #FFFFFF;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 30px;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.1); 
+    z-index: 100;
+}
+
+.logo-sidebar {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4E5E6C;
+    text-decoration: none;
+    letter-spacing: 1px;
+    display: block;
+    margin: 0 20px 30px 20px;
+    border-bottom: 1px solid #EAEAEA;
+    padding-bottom: 20px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: #4E5E6C;
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+}
+
+.sidebar a i {
+    font-size: 18px;
+    width: 30px;
+    text-align: center;
+    color: #748492; 
+}
+
+.sidebar a:hover {
+    background: #ECEAE7;
+    color: #4E5E6C;
+    border-left: 4px solid #9EC3B5;
+}
+
+.sidebar a:hover i {
+    color: #4E5E6C;
+}
+
+.sidebar a.active {
+    background: #F0F0F0;
+    color: #4E5E6C;
+    font-weight: bold;
+    border-left: 4px solid #9EC3B5;
+}
+
+.sidebar a.active i {
+    color: #9EC3B5; 
+}
+
+.sidebar hr {
+    border-color: #E0E0E0; 
+    margin: 20px 20px;
+}
+
+/* Main Content - REMOVED PADDING HERE */
+.content {
+    margin-left: 250px; 
+    /* padding: 40px; <-- Removed */
+    flex: 1;
+    min-height: 100vh;
+}
+
+.content h1 {
+    font-size: 32px;
+}
+
+.content small {
+    color: #9EC3B5; 
+    font-size: 18px;
+}
+
+/* General Card Style for internal pages */
+.card {
+    background: #FFFFFF; 
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 0; /* Changed to 0 so the new .column-stack gap controls spacing */
+}
+
+/* Form/Input Styles for internal pages */
+.card label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #4E5E6C;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.card input[type="number"], 
+.card input[type="text"] {
+    width: 100%; /* FIX: Changed from 95% to 100% */
+    padding: 12px;
+    margin-top: 0;
+    border-radius: 8px;
+    border: 1px solid #D0D0D0;
+    background: #FAFAFA; 
+    color: #4E5E6C;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box; /* FIX: Added to prevent padding/border from overflowing 100% width */
+}
+
+.card input:focus {
+    outline: none;
+    border-color: #9EC3B5; 
+    box-shadow: 0 0 0 3px rgba(158, 195, 181, 0.5); 
+    background: #FFFFFF;
+}
+
+/* Select element for consistency with inputs (used in expenses.html) */
+.card select {
+    width: 100%; /* Important for grid layout */
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #D0D0D0;
+    background: #FAFAFA; 
+    color: #4E5E6C;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+
+/* Override .main-cta button for forms */
+.card .main-cta {
+    width: 100%; 
+    margin-top: 25px;
+}
+
+/* ------------------------------------- */
+/* TOOLTIP STYLES */
+/* ------------------------------------- */
+.info-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* Info Icon Styling */
+.info-tooltip i {
+    color: #748492; 
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.info-tooltip:hover i {
+    color: #9EC3B5; 
+}
+
+/* Tooltip box content */
+.info-tooltip::before {
+    content: attr(data-info); 
+    visibility: hidden;
+    width: 250px;
+    background-color: #4E5E6C; 
+    color: #FFFFFF;
+    text-align: left;
+    border-radius: 8px;
+    padding: 10px;
+    position: absolute;
+    z-index: 50;
+    bottom: 125%; 
+    left: 50%;
+    margin-left: -125px; 
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: normal;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Tooltip arrow/triangle */
+.info-tooltip::after {
+    content: '';
+    position: absolute;
+    visibility: hidden;
+    top: -5px; 
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4E5E6C transparent transparent transparent;
+}
+
+/* Show the tooltip and arrow on hover */
+.info-tooltip:hover::before,
+.info-tooltip:hover::after {
+    visibility: visible;
+}
+
+
+/* ------------------------------------- */
+/* PROGRESS BAR STYLES (setup.html) */
+/* ------------------------------------- */
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 0 20px;
+}
+
+.progress-line {
+    position: absolute;
+    height: 4px;
+    background: #E0E0E0;
+    width: 80%; 
+    left: 10%;
+    z-index: 1;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #9EC3B5; 
+    transition: width 0.4s ease-in-out;
+}
+
+.progress-step {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #E0E0E0;
+    color: #4E5E6C;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 2px solid #D0D0D0;
+    z-index: 2;
+    transition: all 0.3s;
+}
+
+.progress-step.active {
+    background: #9EC3B5; 
+    color: #FFFFFF;
+    border-color: #9EC3B5;
+}
+
+.progress-step.done {
+    background: #8CB4A6; 
+    color: #FFFFFF;
+    border-color: #8CB4A6;
+}
+
+/* ------------------------------------- */
+/* EXPENSES PAGE STYLES (expenses.html) */
+/* ------------------------------------- */
+
+/* New two-column layout for the main section */
+.stacked-grid-container {
+    display: grid;
+    /* Create two columns of equal width, separated by a gap */
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* New wrapper to stack items in the column */
+.column-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Space between the cards in the stack */
+}
+
+/* Table Style Fix for light theme */
+.card table th {
+    background: #E8E5E2; /* Lighter background for header */
+    color: #4E5E6C; 
+}
+.card table td {
+    background: #FFFFFF; /* White background for rows */
+    color: #4E5E6C;
+    border-bottom: 1px solid #F4F1ED;
+}
+
+
+/* ------------------------------------- */
+/* ANIMATION */
+/* ------------------------------------- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .hero-container {
+        flex-direction: column;
+        padding: 50px 40px;
+    }
+    .hero-content, .hero-image-box {
+        max-width: 100%;
+        padding-right: 0;
+    }
+    .hero-image-box {
+        margin-top: 40px;
+    }
+
+    /* Responsive for Expenses Page Grid (Stacks vertically on tablets) */
+    .stacked-grid-container {
+      grid-template-columns: 1fr; /* Stack on smaller screens */
+      gap: 20px;
+    }
+    
+    /* Removed the deprecated .grid-2-col reference */
+}
+@media (max-width: 768px) {
+    /* Adjust sidebar width and content margin for smaller screens */
+    .sidebar {
+        width: 70px; /* Collapse sidebar */
+        padding-top: 10px;
+    }
+    .content {
+        margin-left: 70px; /* Adjust content margin */
+        padding: 20px 0; /* Use 20px padding top/bottom, 0 left/right because main-container handles horizontal padding now */
+    }
+    .logo-sidebar, .sidebar hr {
+        display: none; /* Hide logo and divider in collapsed view */
+    }
+    /* Hide link text, show only icons */
+    .sidebar a span {
+        display: none; 
+    }
+    .sidebar a {
+        justify-content: center;
+        padding: 12px 0;
+    }
+    .sidebar a i {
+        width: 100%;
+    }
+}
+
+/* Add to your style.css if needed */
+.info-icon {
+    color: #748492; /* Neutral color for the icon */
+    font-size: 0.9em;
+    margin-left: 5px;
+    cursor: help; /* Indicates interactivity */
+}
+
+/* ------------------------------------- */
+/* CONTENT WIDTH AND CENTERING */
+/* ------------------------------------- */
+/* Use this class inside the .content div on setup.html and expenses.html */
+.main-container {
+    max-width: 700px; /* Consistent width for both pages */
+    margin: 0 auto; /* Center the content */
+    padding: 40px; /* PADDING MOVED HERE */
+}
+
+/* Make sure all children of the container stretch to its full width */
+.main-container > * {
+    width: 100%;
+}
+
+/* ------------------------------------- */
+/* DASHBOARD SPECIFIC STYLES */
+/* ------------------------------------- */
+
+/* Grid for the three summary cards at the top */
+.cards-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+/* Individual Stat Card Styling */
+.stat-card {
+    background: #FFFFFF; 
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid #9EC3B5; /* Dynamic color set by JS */
+}
+
+.stat-card .stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #4E5E6C;
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-title {
+    font-size: 14px;
+    color: #748492;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
