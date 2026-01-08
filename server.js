@@ -47,19 +47,19 @@ app.use(cors({
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization' // CRITICAL: Allows the Authorization header for tokens
 }));
-// ----------------------------
 
 // --- Database Configuration ---
 // Works both locally and on App Engine
+const isCloud = process.env.INSTANCE_CONNECTION_NAME;
 const dbConfig = process.env.INSTANCE_CONNECTION_NAME ? {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`
 } : {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    user: 'root',
+    password: 'root',
+    database: 'final_project_db',
     host: '127.0.0.1',
     port: 3306
 };
