@@ -548,7 +548,9 @@ h2#dashboardTitle {
 </div>
 <script>
 // --- GLOBAL CONFIG & HELPERS ---
-const API_BASE_URL = "https://gentle-dominion-474410-t3.as.r.appspot.com"; 
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? "http://localhost:8080" 
+    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
 const user_email = sessionStorage.getItem("se_current") || localStorage.getItem("se_remember");
 const user_id = sessionStorage.getItem('se_userId') || localStorage.getItem('se_userId');
 
