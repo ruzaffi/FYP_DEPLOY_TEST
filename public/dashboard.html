@@ -394,7 +394,7 @@ h2#dashboardTitle {
 <body class="dashboard-layout">
 <div class="sidebar">
         <a href="index.html" class="logo-sidebar">
-        <img src="logo.png" alt="SmartExpense AI Logo">
+        <img src="images/logo.png" alt="SmartExpense AI Logo">
         <span>SMART EXPENSES AI</span>
         </a>
         <a href="dashboard.html" class="active">
@@ -897,7 +897,7 @@ if (trackerBox) trackerBox.innerHTML = "";
             tr.innerHTML = `
                 <td style="padding: 10px;">${r.category}</td>
                 <td style="padding: 10px; font-weight: bold;">RM ${Number(r.amount).toFixed(2)}</td>
-                <td style="padding: 10px; color: #748492;">${r.date} ${r.desc? '— ' + r.desc : ''}</td>`;
+                <td style="padding: 10px; color: #748492;">${r.date} ${r.description ? '— ' + r.description : ''}</td>`;
             txTable.appendChild(tr);
         });
     }

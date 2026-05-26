@@ -304,7 +304,7 @@
     <!-- SIDEBAR (Now dark with light links, Red Logout) -->
   <div class="sidebar">
     <a href="index.html" class="logo-sidebar">
-    <img src="logo.png" alt="SmartExpense AI Logo">
+    <img src="images/logo.png" alt="SmartExpense AI Logo">
     <span>SMART EXPENSES AI</span>
     </a>
         <a href="dashboard.html">
@@ -488,7 +488,7 @@ function getUserId() {
             if (res.ok) {
                 const result = await res.json();
                 document.getElementById('addSave').value = ''; // Clear input
-                showToast(`Savings updated! Current total: RM ${result.saved_amount.toFixed(2)}`, 'success');
+                showToast(`Savings updated! Current total: RM ${Number(result.saved_amount).toFixed(2)}`, 'success');
             } else {
                 const errorData = await res.json();
                 showToast(errorData.message || 'Failed to update savings.', 'error');

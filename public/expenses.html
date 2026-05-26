@@ -382,7 +382,7 @@ button.delete-btn:hover {
 
 <div class="sidebar">
         <a href="index.html" class="logo-sidebar">
-        <img src="logo.png" alt="SmartExpense AI Logo">
+        <img src="images/logo.png" alt="SmartExpense AI Logo">
         <span>SMART EXPENSES AI</span>
         </a>
         <a href="dashboard.html">
@@ -551,6 +551,8 @@ function getToken() {
         const category = document.getElementById('category').value;
         const amount = Number(document.getElementById('amount').value);
         const desc = document.getElementById('desc').value.trim();
+        const description = desc;
+        const date = new Date().toISOString().slice(0, 10);
 
         if (!amount || amount <= 0 || !token || !user_id) { 
             showToast('Please check the amount and ensure you are logged in.', 'error');
@@ -580,7 +582,7 @@ const expense = {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}` // <--- SECURE TOKEN
                 },
-                body: JSON.stringify({ user_id, category, amount, desc, date: expense.date })
+                body: JSON.stringify({ user_id, category, amount, description, date })
             });
 
             if (res.ok) {
@@ -642,8 +644,8 @@ window.deleteExpense = async function(expenseId) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${expense.category}</td>
-            <td>RM ${expense.amount.toFixed(2)}</td>
-            <td>${expense.desc || '-'}</td>
+            <td>RM ${Number(expense.amount).toFixed(2)}</td>
+            <td>${expense.description || expense.desc || '-'}</td>
             <td>${expense.date}</td>
             <td>
                 <button class="delete-btn" onclick="deleteExpense(${expense.id})">
@@ -658,7 +660,7 @@ window.deleteExpense = async function(expenseId) {
     // --- 6. Total Calculation ---
     function renderTotal() {
         const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user) || '[]');
-        const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+        const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
         document.getElementById('totalAmount').innerHTML = `Total Expenses: RM ${total.toFixed(2)}`;
     }
 
