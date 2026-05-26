@@ -80,7 +80,7 @@ body.dashboard-layout { display: flex; }
 .dashboard-container > *, .form-container > * { width: 100%; }
 
 /* Cards and Forms */
-.card { background: #FFF; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
+.card { background: #FFF; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; min-width: 0; max-width: 100%; overflow-x: hidden; box-sizing: border-box; }
 .card label { display: block; margin: 15px 0 5px; color: #4E5E6C; font-weight: 600; font-size: 15px; }
 .card input[type="number"], .card input[type="text"], .card select {
     width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D0D0D0; 
@@ -102,6 +102,19 @@ body.dashboard-layout { display: flex; }
 .stat-card { background: #FFF; border-radius: 12px; padding: 20px 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #9EC3B5; }
 .stat-card .stat-value { font-size: 28px; font-weight: bold; color: #4E5E6C; margin-bottom: 5px; }
 .stat-card .stat-title { font-size: 14px; color: #748492; text-transform: uppercase; letter-spacing: 0.5px; }
+
+#savingsProgressContent,
+#savingsResultBox {
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+#savingsChart {
+    display: block;
+    max-width: 100%;
+}
 
 /* FIX: The background and border that creates the highlight */
 .ai-advisor-card { 
@@ -663,6 +676,16 @@ function normalizeBudget(budget) {
     };
 }
 
+function normalizeSavings(savings) {
+    if (!savings) return null;
+    return {
+        ...savings,
+        target: Number(savings.target || 0),
+        saved_amount: Number(savings.saved_amount || 0),
+        months: Number(savings.months || 1)
+    };
+}
+
 // --- 1. SECURE DATA FETCH AND MAIN RENDER ---
 
 /**
@@ -724,8 +747,9 @@ if (dashboardData.success && dashboardData.expenses) {
     localStorage.setItem('se_expenses_' + user_email, '[]'); 
 }        
         // Save Savings data (already fixed in previous step, confirming keys)
-        if (savingData && savingData.target) {
-            localStorage.setItem('se_savings_' + user_email, JSON.stringify(savingData));
+        const savings = normalizeSavings(savingData);
+        if (savings && savings.target > 0) {
+            localStorage.setItem('se_savings_' + user_email, JSON.stringify(savings));
         } else {
             localStorage.removeItem('se_savings_' + user_email);
         }
@@ -782,7 +806,7 @@ function mainRender() {
     // Get data from local storage (now guaranteed to be the latest synced data)
 const setup = normalizeBudget(JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null'));
     const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user_email) || '[]');
-    const savingsGoal = JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null');
+    const savingsGoal = normalizeSavings(JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null'));
 
     // --- Check if Setup is complete (CRITICAL CHECK) ---
     if (!setup || !setup.income) { 
@@ -1008,57 +1032,69 @@ function renderSavingsProgress(savingsGoal, expenses) {
     const savingsContainer = document.getElementById('savingsProgressContent');
     const noSavingsMsg = document.getElementById('noSavingsMessage');
     const savingsResultBox = document.getElementById('savingsResultBox');
+    const savingsCanvas = document.getElementById('savingsChart');
 
-    // The 'recordedSavings' calculation from expenses is now redundant 
-    // since the API returns the official saved amount.
-    // const recordedSavings = expenses.filter(e=>e.category==='Savings').reduce((s,r)=>s+Number(r.amount),0); // DELETE OR COMMENT OUT THIS LINE
-    
-    // ⭐️ FIX 3: Check for the new key: 'target'
-    if (!savingsGoal || !savingsGoal.target) {
+    const target = Number(savingsGoal?.target || 0);
+    const saved = Number(savingsGoal?.saved_amount || 0);
+    const months = Number(savingsGoal?.months || 1);
+
+    if (!target || target <= 0) {
         savingsContainer.style.display = 'none';
         noSavingsMsg.style.display = 'block';
+        if (window.savingsChartInstance) {
+            window.savingsChartInstance.destroy();
+            window.savingsChartInstance = null;
+        }
         return;
     }
 
     savingsContainer.style.display = 'block';
     noSavingsMsg.style.display = 'none';
 
-    // ⭐️ FIX 4: Use the correct keys from the API response
-    const target = savingsGoal.target || 0; 
-    const saved = savingsGoal.saved_amount || 0; // Use the official saved amount from the API
-    const progressPercent = (saved / target) * 100;
-    const remaining = Math.max(target - saved, 0); 
-    const months = savingsGoal.months || 1; // Get 'months' from savingsGoal
+    const chartSaved = Math.max(saved, 0);
+    const remaining = Math.max(target - chartSaved, 0);
+    const progressPercent = Math.min((chartSaved / target) * 100, 100);
 
     savingsResultBox.innerHTML = `
         <div><strong>Goal:</strong> ${savingsGoal.goal || 'Savings Target'}</div>
         <div><strong>Target Amount:</strong> RM ${target.toFixed(2)}</div>
-        <div><strong>Progress:</strong> RM ${saved.toFixed(2)} (${progressPercent.toFixed(1)}%).</div>
+        <div><strong>Progress:</strong> RM ${chartSaved.toFixed(2)} (${progressPercent.toFixed(1)}%).</div>
         <div style="font-weight: bold; color: ${BLUE_ACCENT};">Remaining: RM ${remaining.toFixed(2)}.</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Time Goal: ${months} Months.</div>
     `;
 
-    if (savingsChartInstance) {
-        savingsChartInstance.destroy();
-        // 🟢 CRITICAL FIX: Nullify the global variable after destruction
-        savingsChartInstance = null;
+    if (window.savingsChartInstance) {
+        window.savingsChartInstance.destroy();
+        window.savingsChartInstance = null;
     }
-    window.savingsChartInstance = new Chart(document.getElementById('savingsChart').getContext('2d'), {
+
+    if (!savingsCanvas) return;
+
+    window.savingsChartInstance = new Chart(savingsCanvas.getContext('2d'), {
         type: 'doughnut',
         data: {
             labels: ['Saved', 'Remaining'],
             datasets: [{
-                data: [saved, remaining],
-                // ... (Chart background colors logic)
-                backgroundColor: [saved >= target ? BLUE_ACCENT : BLUE_ACCENT, saved >= target ? '#D0D0D0' : '#748492']
+                data: [Math.min(chartSaved, target), remaining],
+                backgroundColor: [BLUE_ACCENT, chartSaved >= target ? '#D0D0D0' : '#748492'],
+                borderWidth: 0
             }]
         },
         options: {
-            // ... (Chart options)
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '68%',
+            plugins: {
+                legend: { position: 'bottom', labels: { color: LIGHT_TEXT } },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.label}: RM ${Number(ctx.parsed).toFixed(2)}`
+                    }
+                }
+            }
         }
     });
 }
-
 function renderAIAdvisor(setup, expenses, savingsData) {
     const aiText = document.getElementById('aiText');
     if (!aiText) return;
