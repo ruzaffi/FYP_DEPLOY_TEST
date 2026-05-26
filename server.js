@@ -1,4 +1,4 @@
-// server.js - SmartExpense Backend API (PostgreSQL Migrated Version)
+// server.js - SmartExpense Backend API (PostgreSQL Migrated Version with Static Asset Support)
 
 const express = require('express');
 const { Pool } = require('pg'); // 🔄 Swapped mysql for pg
@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const path = require('path'); // 🚀 Added path module for static file directory routing
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -18,6 +19,9 @@ const TOKEN_EXPIRY_MINUTES = 30;
 
 // --- Middleware ---
 app.use(express.json());
+
+// 🚀 Serve static frontend assets dynamically from the public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 const allowedOrigins = [
   'http://127.0.0.1:5500',
@@ -42,19 +46,24 @@ app.use(cors({
 }));
 
 // --- Database Configuration ---
-// Cloud Run securely passes your Supabase URI via the DATABASE_URL environment variable
 const dbConnectionString = process.env.DATABASE_URL || 'postgresql://postgres:root@127.0.0.1:5432/postgres';
 
 const pool = new Pool({
     connectionString: dbConnectionString,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false // Enables secure SSL for cloud DB connections
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false 
 });
 
-// Helper function mimicking your original query syntax to minimize rewrites
 const queryAsync = async (text, params) => {
     const res = await pool.query(text, params);
     return res.rows;
 };
+
+// --- Frontend Default Entry Route ---
+
+// 🚀 Redirect root domain request directly to your login interface
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 // --- API Endpoints ---
 
@@ -67,7 +76,7 @@ app.post('/api/register', async (req, res) => {
         await queryAsync(sql, [name, email, hashedPassword]);
         res.status(201).json({ success: true, message: 'Registration successful.' });
     } catch (error) {
-        if (error.code === '23505') // PostgreSQL Unique Violation Error Code
+        if (error.code === '23505') 
             return res.status(409).json({ success: false, message: 'Email already registered.' });
         console.error('Register Error:', error);
         res.status(500).json({ success: false, message: 'Server error during registration.' });
@@ -112,7 +121,7 @@ app.post('/api/forgot_password', async (req, res) => {
             return res.status(200).json({ success: true, message: 'If this email exists, reset link sent.' });
 
         const user = results[0];
-        const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: `${TOKEN_EXPIRY_MINUTES}m` });
+        const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: `${TOKEN_EXPIRY_MINMinutes}m` });
         const resetUrl = `${BASE_URL}/reset_password_form.html?token=${token}`; 
 
         const transporter = nodemailer.createTransport({
@@ -207,7 +216,7 @@ app.get('/api/budget/:userId', authenticateToken, async (req, res) => {
     }
 });
 
-// POST/PUT Budget Data (ON CONFLICT Postgres Optimization)
+// POST/PUT Budget Data
 app.post('/api/budget/save', authenticateToken, async (req, res) => {
     const { user_id, income, rent, food, internet, others } = req.body;
     const monthYear = new Date().toISOString().slice(0, 7);
@@ -243,7 +252,6 @@ app.post('/api/expense/add', authenticateToken, async (req, res) => {
     if (String(req.user.id) !== String(user_id)) return res.status(403).json({ success: false, message: 'Unauthorized attempt to save expense.' });
     
     try {
-        // Postgres optimization: uses RETURNING id to immediately get back the tracking ID
         const sql = `
             INSERT INTO expenses (user_id, amount, category, description, expense_date, month_year)
             VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;
@@ -311,7 +319,7 @@ app.post('/api/expense/delete', authenticateToken, async (req, res) => {
         const sql = 'DELETE FROM expenses WHERE user_id = $1 AND id = $2';
         const resObj = await pool.query(sql, [user_id, expense_id]);
 
-        if (resObj.rowCount === 0) { // 🔄 Updated affectedRows tracking for Postgres
+        if (resObj.rowCount === 0) { 
             return res.status(404).json({ success: false, message: 'Expense not found or unauthorized.' });
         }
         res.status(200).json({ success: true, message: 'Expense deleted successfully.' });
