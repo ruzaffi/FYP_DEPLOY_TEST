@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.git
+.github
+public/dashboard_mockup.png
+public/team1.jpg
+public/team2.jpg
+public/team3.jpg
+public/slip_keputusan.pdf

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Smart Expenses AI — Welcome</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* Reset any extra/non-standard spacing */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    /* Removed non-standard spaces */
+    background: #F4F1ED;
+    color: #333;
+}
+
+/* --- Premium Header --- */
+.header {
+    background: linear-gradient(90deg, #2C3E50, #24323F);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.header a.logo {
+    color: #fff;
+    font-size: 1.3rem;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.nav-links a {
+    color: #EAEAEA;
+    text-decoration: none;
+    margin-left: 25px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #9EC3B5;
+}
+
+.nav-links button {
+    background-color: #9EC3B5;
+    border: none;
+    color: #2C3E50;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: background 0.3s ease;
+}
+.nav-links button:hover { background-color: #8EB5A7; }
+
+/* --- Hero --- */
+.hero-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 10%;
+    max-width: 1200px;
+    margin: auto;
+    flex-wrap: wrap;
+}
+.hero-content { flex: 1; max-width: 550px; }
+.hero-content h1 { font-size: 2rem; margin-bottom: 15px; color: #2C3E50; }
+.hero-content p { margin-bottom: 20px; line-height: 1.6; }
+.main-cta {
+    background: #6CA08D; 
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.main-cta:hover { background: #5F8E7D; }
+
+.hero-image-box { flex: 1; text-align: center; }
+.hero-image-box img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* --- Section Cards --- */
+.section-card {
+    background: #fff;
+    margin: 60px auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    max-width: 1000px;
+}
+.section-card h2, .section-card h3 {
+    color: #2C3E50;
+    margin-bottom: 20px;
+}
+.section-card p { line-height: 1.6; }
+
+/* --- Feature Grid --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+.feature {
+    background: #FAFAFA;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* --- Premium Icon Style - RESTORED ORIGINAL LOOK --- */
+.icon-box {
+    font-size: 2rem;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 12px; /* Restored margin to original structure */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    color: #fff;
+    background: linear-gradient(135deg, #6CA08D, #4E7C6C);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    /* Removed the transitional effects on icon-box itself as it made the layout "ugly" */
+}
+/* Removed the hover effect on .icon-box:hover to simplify/stabilize layout */
+
+/* --- How It Works --- */
+.how-it-works {
+    background: #EAF1EE;
+    padding: 60px 10%;
+    text-align: center;
+}
+.how-it-works h2 { color: #2C3E50; margin-bottom: 40px; }
+.steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+.step {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.step i {
+    font-size: 2rem;
+    color: #6CA08D;
+    margin-bottom: 10px;
+}
+
+/* --- Team --- */
+.team-section {
+    background: #fff;
+    padding: 60px 10%;
+    text-align: center;
+}
+.team-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+}
+.team-member {
+    background: #F9FAF9;
+    padding: 20px;
+    border-radius: 16px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.team-member:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+.team-member img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.team-member h4 { margin: 15px 0 5px; color: #2C3E50; }
+.team-member p { color: #555; }
+
+/* --- Contact --- */
+.contact-section {
+    background: #EAF1EE;
+    padding: 50px 10%;
+    text-align: center;
+}
+.contact-section h2 { color: #2C3E50; margin-bottom: 20px; }
+.contact-icons i {
+    font-size: 2rem;
+    margin: 10px 15px;
+    color: #6CA08D;
+    cursor: pointer;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.contact-icons i:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #6CA08D, #4E7C6C);
+    color: #fff;
+}
+
+/* --- Footer --- */
+footer {
+    background: #2C3E50;
+    color: #fff;
+    text-align: center;
+    padding: 20px 10%;
+    font-size: 0.9rem;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+    border-radius: 8px;
+    object-fit: contain;
+
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* space between logo and text */
+    text-decoration: none;
+}
+
+.logo span {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1; /* makes text vertically centered */
+}
+
+.hero-container {
+    padding-top: 100px;
+}
+
+/* --- SCROLL ANIMATION STYLES (Kept) --- */
+.animated {
+    /* Initial state: Hidden and slightly moved down (fade-in-up) */
+    opacity: 0;
+    transform: translateY(30px);
+    /* Transition for smooth animation */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.animate-active {
+    /* Final state: Visible and in original position */
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+</head>
+
+<body>
+    <div class="header">
+        <a href="#" class="logo">
+            <img src="logo.png" alt="SmartExpense AI Logo" class="logo-img">
+            <span>Smart Expense AI</span>
+        </a>
+
+        <div class="nav-links" id="navLinks">
+            <a href="#about-mission">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </div>
+
+    <div class="hero-container">
+        <div class="hero-content animated">
+            <h1>Smart Guidance to Master Your Budgeting Journey</h1>
+            <p>Focus on what matters most by leveraging our <strong>personalized budgeting tools</strong> and <strong>AI-driven spending advice</strong>. Start your journey to manage your income and expenses smarter and more efficiently.</p>
+            <button class="main-cta" onclick="location.href='register.html'">
+                Let's Get Started <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </button>
+        </div>
+        <div class="hero-image-box animated">
+            <img src="dashboard_mockup.png" alt="SmartExpense AI Dashboard Mockup">
+        </div>
+    </div>
+
+    <div class="about-section" id="about-mission">
+        <div class="section-card animated">
+            <h2><i class="fa-solid fa-circle-info"></i> About SmartExpense AI</h2>
+            <h3>Objective & Purpose</h3>
+            <p><strong>SmartExpense AI</strong> was developed to help users manage their personal finances more easily and intelligently. It uses an <strong>AI</strong> to provide advice on spending, budgeting, and maintaining financial balance.</p>
+            <p>Perfect for students, employees, and individuals who want to plan their finances more wisely.</p>
+        </div>
+
+        <div class="section-card animated">
+            <h3><i class="fa-solid fa-gears"></i> Key Features</h3>
+            <div class="grid">
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-robot"></i></div>
+                    <h4>Smart AI Advisor</h4>
+                    <p>Gives automatic advice based on your spending patterns and financial behavior.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-chart-area"></i></div>
+                    <h4>Interactive Charts</h4>
+                    <p>Visualize your expenses using pie charts and detailed financial reports.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-piggy-bank"></i></div>
+                    <h4>Savings Tracker</h4>
+                    <p>Track your savings progress and compare it against your financial goals.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-cloud"></i></div>
+                    <h4>Cloud-Based Access</h4>
+                    <p>Your data is securely stored online — not locally — so you can access your account anytime, anywhere.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <h4>User-Friendly Interface</h4>
+                    <p>Modern and responsive design suitable for all types of devices.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                    <h4>AI Spending Forecast</h4>
+                    <p>Predicts your future expenses based on past behavior and suggests ways to stay on track.</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <section id="how-it-works" class="how-it-works animated">
+        <h2><i class="fa-solid fa-lightbulb"></i> How It Works</h2>
+        <div class="steps">
+            <div class="step"><i class="fa-solid fa-user-plus"></i><h4>1. Create Account</h4><p>Register and set up your personal budget goals.</p></div>
+            <div class="step"><i class="fa-solid fa-wallet"></i><h4>2. Track Spending</h4><p>Input your expenses daily.</p></div>
+            <div class="step"><i class="fa-solid fa-robot"></i><h4>3. Get AI Advice</h4><p>Receive intelligent tips to improve your savings.</p></div>
+        </div>
+    </section>
+
+    <section id="team" class="team-section animated">
+        <h2><i class="fa-solid fa-users"></i> Meet Our Team</h2>
+        <p>We are the passionate team behind <strong>SmartExpense AI</strong>, dedicated to helping users make smarter financial decisions.</p>
+        <div class="team-grid">
+            <div class="team-member">
+                <img src="team1.jpg" alt="Ariq - Project Leader & AI Developer">
+                <h4>Ariq</h4>
+                <p>Project Leader & AI Developer<br>
+                Led the project development, handled AI model design, and contributed to the frontend interface.</p>
+            </div>
+            <div class="team-member">
+                <img src="team2.jpg" alt="Aniff - AI Integration & Code Support">
+                <h4>Aniff</h4>
+                <p>AI Integration & Code Support<br>
+                Assisted in integrating AI features, optimized the system logic, and supported testing and debugging.</p>
+            </div>
+            <div class="team-member">
+                <img src="team3.jpg" alt="Ruzaffi - Backend Developer">
+                <h4>Ruzaffi</h4>
+                <p>Backend Developer<br>
+                Developed database connections, handled server logic, and ensured smooth data processing for user accounts.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section animated">
+        <h2><i class="fa-solid fa-envelope"></i> Contact Us</h2>
+        <p>Have questions or suggestions? We'd love to hear from you.</p>
+        <div class="contact-icons">
+            <i class="fa-solid fa-envelope"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-github"></i>
+        </div>
+    </section>
+
+    <footer>© 2025 SmartExpense AI — All Rights Reserved</footer>
+
+    <script>
+    const email = sessionStorage.getItem('se_current') || localStorage.getItem('se_remember');
+    const navLinks = document.getElementById('navLinks');
+    if (email) {
+        navLinks.innerHTML += `
+            <a href="dashboard.html">Dashboard</a>
+            <button onclick="logout()">Logout </button>
+        `;
+    } else {
+        navLinks.innerHTML += `
+            <button onclick="location.href='login.html'">
+                Login / Register <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        `;
+    }
+    function logout() {
+        sessionStorage.removeItem("se_current");
+        localStorage.removeItem("se_remember");
+        alert("You have successfully logged out ");
+        location.href = "register.html";
+    }
+
+    /* --- UPDATED SCROLL ANIMATION JAVASCRIPT for Re-triggering --- */
+    const animatedElements = document.querySelectorAll('.animated');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Element enters viewport: trigger animation
+                entry.target.classList.add('animate-active');
+                // IMPORTANT: DO NOT call observer.unobserve(entry.target);
+            } else {
+                // Element leaves viewport: reset state to allow re-trigger
+                entry.target.classList.remove('animate-active');
+            }
+        });
+    }, {
+        // threshold: 0.1 means trigger when 10% of the element is visible
+        root: null, 
+        threshold: 0.1 
+    });
+
+    // Start observing all elements with the 'animated' class
+    animatedElements.forEach(element => {
+        observer.observe(element);
+    });
+    /* --- END UPDATED SCROLL ANIMATION JAVASCRIPT --- */
+</script>
+</body>
+</html>

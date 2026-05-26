@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard — SmartExpense AI</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+  :root{
+    --text-danger: #E74C3C; 
+  }
+
+/* Core Layout and Utility Styles */
+html { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #F4F1ED; margin: 0; padding: 0; color: #4E5E6C; overflow-x: hidden; }
+h1, h2, h3, h4 { color: #4E5E6C; line-height: 1.2; }
+p { color: #748492; font-size: 18px; line-height: 1.6; }
+.text-negative { color: #C0392B; font-weight: bold; }
+
+/* Buttons and Links */
+.main-cta { padding: 16px; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; margin: 8px 0; color: #FFF; background: #6CA08D; transition: all 0.2s; }
+.main-cta:hover { transform: translateY(-2px); background: #5F8E7D; box-shadow: 0 4px 16px rgba(108, 160, 141, 0.4); }
+.export-btn { padding: 8px 15px; border: 1px solid #D0D0D0; border-radius: 8px; background: #FFF; color: #4E5E6C; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+.export-btn:hover { background: #ECEAE7; border-color: #9EC3B5; }
+.export-buttons-container { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+/* Dashboard Layout (Fixed Sidebar + Main Content) */
+body.dashboard-layout { display: flex; }
+
+/* --- DARK SIDEBAR STYLES --- */
+.sidebar {
+    width: 250px; height: 100vh; position: fixed; top: 0; left: 0; padding-top: 30px; 
+    background: #2C3E50; /* Deep Charcoal/Blue background */
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3); /* Darker shadow */
+    z-index: 100;
+}
+.logo-sidebar { 
+    font-size: 20px; font-weight: bold; color: #ECF0F1; /* Light text for contrast */
+    display: block; 
+    margin: 0 20px 30px 20px; border-bottom: 1px solid #4A637F; /* Darker border */
+    padding-bottom: 20px; 
+}
+.sidebar a {
+    display: flex; align-items: center; color: #ECF0F1; /* Light text for links */
+    padding: 15px 20px; text-decoration: none; 
+    font-size: 16px; border-left: 4px solid transparent; transition: all 0.3s;
+}
+.sidebar a i { 
+    font-size: 18px; width: 30px; text-align: center; color: #95A5A6; /* Subtle icon color */
+}
+/* Dark hover and active states for better contrast */
+.sidebar a:hover { 
+    background: #3E5266; 
+    border-left: 4px solid #9EC3B5; 
+}
+.sidebar a.active { 
+    background: #34495E; 
+    font-weight: bold; 
+    border-left: 4px solid #9EC3B5; 
+}
+.sidebar a.active i { 
+    color: #9EC3B5; 
+}
+.sidebar hr { 
+    border-color: #4A637F; /* Darker divider */
+    margin: 20px; 
+}
+/* --- END DARK SIDEBAR STYLES --- */
+
+.content { margin-left: 250px; flex: 1; min-height: 100vh; }
+.content h1 { font-size: 32px; }
+.content small { color: #9EC3B5; font-size: 18px; }
+
+/* Content Wrappers for consistent centering/width */
+.main-container { margin: 0 auto; }
+.form-container { max-width: 750px; padding: 40px; }
+.dashboard-container { max-width: 1200px; padding: 40px; }
+.dashboard-container > *, .form-container > * { width: 100%; }
+
+/* Cards and Forms */
+.card { background: #FFF; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
+.card label { display: block; margin: 15px 0 5px; color: #4E5E6C; font-weight: 600; font-size: 15px; }
+.card input[type="number"], .card input[type="text"], .card select {
+    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #D0D0D0; 
+    background: #FAFAFA; color: #4E5E6C; font-size: 16px; transition: all 0.3s; box-sizing: border-box;
+}
+.card input:focus, .card select:focus {
+    outline: none; border-color: #9EC3B5; box-shadow: 0 0 0 3px rgba(158, 195, 181, 0.5); background: #FFF;
+}
+.card .main-cta { width: 100%; margin-top: 25px; }
+
+/* Grids, Stacking, and Tables */
+.stacked-grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+.column-stack { display: flex; flex-direction: column; gap: 30px; }
+.cards-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+.card table th { background: #E8E5E2; color: #4E5E6C; }
+.card table td { background: #FFF; color: #4E5E6C; border-bottom: 1px solid #F4F1ED; }
+
+/* Dashboard Specific Cards */
+.stat-card { background: #FFF; border-radius: 12px; padding: 20px 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #9EC3B5; }
+.stat-card .stat-value { font-size: 28px; font-weight: bold; color: #4E5E6C; margin-bottom: 5px; }
+.stat-card .stat-title { font-size: 14px; color: #748492; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* FIX: The background and border that creates the highlight */
+.ai-advisor-card { 
+    background: #FFFBCC !important; /* brighter yellow */
+    border: 1px solid #FFC300; 
+    box-shadow: 0 4px 15px rgba(255, 195, 0, 0.5); 
+    padding: 20px; 
+    border-radius: 9px; 
+}
+
+.ai-advisor-card p { color: #4E5E6C; font-size: 16px; }
+
+/* --- TOOLTIP FIX (Replace or update the existing rules) --- */
+.info-tooltip { 
+    position: relative; 
+    display: inline-block; 
+    cursor: pointer; 
+    margin-left: 5px; 
+}
+.info-tooltip i { 
+    color: #748492; 
+    font-size: 14px; 
+    transition: color 0.2s; 
+}
+.info-tooltip:hover i { 
+    color: #9EC3B5; 
+}
+
+/* Tooltip Box (::before) - Better Positioning and Style */
+.info-tooltip::before { 
+    content: attr(data-info); 
+    visibility: hidden; 
+    width: 250px; 
+    background-color: #4E5E6C; 
+    color: #FFF; 
+    border-radius: 8px; 
+    padding: 10px; 
+    font-size: 13px; 
+    line-height: 1.4; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+    z-index: 1000; 
+    
+    /* Positioning */
+    position: absolute; 
+    top: 150%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    /* Display */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Tooltip Arrow (::after) - A small triangle pointing up */
+.info-tooltip::after {
+    content: '';
+    visibility: hidden;
+    position: absolute;
+    top: 140%; 
+    left: 50%;
+    margin-left: -5px; 
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #4E5E6C transparent; 
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Show on hover */
+.info-tooltip:hover::before, .info-tooltip:hover::after { 
+    visibility: visible; 
+    opacity: 1;
+}
+/* --- END TOOLTIP FIX --- */
+
+.progress-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; padding: 0 20px; }
+.progress-line { position: absolute; height: 4px; background: #E0E0E0; width: 80%; left: 10%; z-index: 1; }
+.progress-bar { height: 100%; background: #9EC3B5; transition: width 0.4s ease-in-out; }
+.progress-step { 
+    width: 30px; height: 30px; border-radius: 50%; background: #E0E0E0; color: #4E5E6C; 
+    display: flex; justify-content: center; align-items: center; font-weight: bold; 
+    border: 2px solid #D0D0D0; z-index: 2; transition: all 0.3s;
+}
+.progress-step.active { background: #9EC3B5; color: #FFF; border-color: #9EC3B5; }
+.progress-step.done { background: #8CB4A6; color: #FFF; border-color: #8CB4A6; }
+
+/* Index/Landing Page Styles (Highly Condensed) */
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #FFF; box-shadow: 0 1px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+.logo { font-size: 20px; font-weight: bold; color: #4E5E6C; letter-spacing: 1px; }
+.nav-links a { color: #748492; margin-left: 25px; font-size: 16px; transition: color 0.2s; }
+.nav-links a:hover { color: #4E5E6C; }
+.header button { padding: 10px 20px; margin-left: 25px; border-radius: 8px; background: #9EC3B5; color: #4E5E6C; font-weight: bold; border: none; cursor: pointer; transition: background 0.2s; }
+.header button:hover { background: #8CB4A6; }
+.hero-container { display: flex; justify-content: space-between; align-items: center; padding: 80px 100px; background: #F4F1ED; animation: fadeIn 1.2s ease-in-out; }
+.hero-content { max-width: 50%; padding-right: 50px; }
+.hero-image-box { max-width: 45%; padding: 20px; border-radius: 15px; background: #F9F7F5; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.hero-image { width: 100%; height: auto; border-radius: 10px; }
+.about-section { padding: 80px 100px; background: #FFF; }
+.feature { background: #FFF; border-radius: 10px; padding: 25px; transition: transform 0.2s; border: 1px solid #E0E0E0; }
+.feature:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+.feature .icon-box { font-size: 30px; color: #9EC3B5; margin-bottom: 15px; }
+footer { text-align: center; padding: 30px 0; background: #E8E5E2; color: #748492; font-size: 14px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .stacked-grid-container { grid-template-columns: 1fr; gap: 20px; }
+    .hero-container { flex-direction: column; padding: 50px 40px; }
+    .hero-content, .hero-image-box { max-width: 100%; padding-right: 0; margin-top: 40px; }
+}
+@media (max-width: 768px) {
+    .sidebar { width: 70px; padding-top: 10px; }
+    .content { margin-left: 70px; padding: 20px 0; }
+.logo-sidebar { 
+    font-size: 20px; font-weight: bold; color: #ECF0F1;
+    display: flex; /* CHANGE: Use flex to align image and text horizontally */
+    align-items: center; /* NEW: Vertically center the image and text */
+    margin: 0 20px 30px 20px; 
+    border-bottom: 1px solid #4A637F;
+    padding-bottom: 20px; 
+}
+    .sidebar a { justify-content: center; padding: 12px 0; }
+    .sidebar a i { width: 100%; }
+    .export-buttons-container { justify-content: center; flex-direction: column; align-items: center; }
+}
+
+/* Add this new class to your <style> block, after other media queries or button styles */
+.fab {
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    font-size: 24px; 
+    padding: 0;
+}
+
+/* LOGOUT LINK STYLES (Match hover effect and glow like others) */
+.sidebar a.logout-link {
+    color: var(--text-danger);
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.sidebar a.logout-link i {
+    color: var(--text-danger);
+    transition: all 0.3s ease;
+}
+
+.sidebar a.logout-link:hover {
+    background: var(--sidebar-active-bg);
+    color: #fff;
+    border-left: 4px solid var(--text-danger);
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8); /* glowing red text */
+    font-weight: bold;
+}
+
+.sidebar a.logout-link:hover i {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8); /* glowing red icon */
+}
+
+.total-card {
+  border: 2px solid #E74C3C; /* Red only for this one */
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.ai-advisor-card { 
+    background: #FFE7B3 !important; 
+    border: 1px solid #FFD479; 
+    box-shadow: 0 4px 15px rgba(255, 192, 70, 0.2); 
+    padding: 30px; 
+    border-radius: 12px; 
+}
+.ai-advisor-card p { 
+    color: #4E5E6C; 
+    font-size: 16px;
+}
+
+
+.robot-head {
+    font-size:36px;
+    color:#2E86C1;
+    animation: robotBlink 2.5s infinite;
+}
+.speech-bubble {
+    position:absolute;
+    right:-8px;
+    top:-6px;
+    background:#2E86C1;
+    color:white;
+    border-radius:50%;
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    animation: bubbleTalk 1.8s infinite;
+    box-shadow:0 0 8px rgba(46,134,193,0.5);
+}
+@keyframes robotBlink {
+    0%, 80%, 100% { opacity:1; }
+    90% { opacity:0.4; }
+}
+@keyframes bubbleTalk {
+    0%, 100% { transform: scale(1); opacity:1; }
+    50% { transform: scale(1.4); opacity:0.8; }
+}
+.card {
+   max-height: auto;
+   overflow-y: auto;
+}
+
+.logo-sidebar img {
+    width: 30px; 
+    height: 30px;
+    object-fit: contain; 
+    vertical-align: middle; 
+    margin-right: 10px; /* NEW: Add space between the image and the text */
+}
+/* ==================================== */
+/* 3. Dropdown Styling (#monthDropdown) */
+/* ==================================== */
+
+/* Container Adjustment (for spacing and alignment) */
+.main-container > div:first-child {
+    margin-bottom: 25px; 
+}
+
+#monthDropdown {
+    /* Box Model - MUST USE !important to override potential global select rules */
+    padding: 8px 15px !important; 
+    height: 40px !important; 
+    
+    /* Appearance */
+    font-size: 16px; 
+    font-weight: 500;
+    color: #4E5E6C; 
+    background-color: #FFFFFF; 
+    
+    /* Border - MUST USE !important */
+    border: 1px solid #D0D3D4 !important; 
+    border-radius: 8px !important; 
+    
+    /* Browser resets for a cleaner look */
+    -webkit-appearance: none; 
+    -moz-appearance: none;    
+    appearance: none;         
+    
+    /* Custom Arrow */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%234E5E6C" d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px !important; /* Make space for the custom arrow */
+    
+    /* Animation */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer; 
+}
+
+#monthDropdown:hover {
+    border-color: #AAB7B8 !important; 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+}
+
+#monthDropdown:focus {
+    outline: none;
+    border-color: #3498DB !important; /* Focus border matches your accent color */
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+h2#dashboardTitle {
+    color: #34495E; 
+    margin: 0;
+}
+
+.info-box:empty {
+  display: none;
+}
+
+</style>
+</head>
+<body class="dashboard-layout">
+<div class="sidebar">
+        <a href="index.html" class="logo-sidebar">
+        <img src="logo.png" alt="SmartExpense AI Logo">
+        <span>SMART EXPENSES AI</span>
+        </a>
+        <a href="dashboard.html" class="active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="setup.html">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Step 1: Budget Setup</span>
+        </a>
+        <a href="expenses.html">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Step 2: Daily Expenses</span>
+        </a>
+        <a href="savings.html">
+            <i class="fa-solid fa-sack-dollar"></i>
+            <span>Step 3: Savings Plan</span>
+        </a>
+        <hr>
+        <!-- Logout now uses the .logout-link class defined in CSS for red color -->
+        <a href="index.html" onclick="logout()" class="logout-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+    
+
+<div class="content">    
+    <div class="main-container" style="max-width: 1200px; padding-bottom: 80px;">
+
+       
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; width: 100%;">
+
+    <!-- Left side: Dashboard + Welcome -->
+    <div style="display:flex; align-items: baseline; gap: 10px;"> 
+        <h1 id="dashboardTitle" style="margin: 0; font-size: 28px;">Dashboard <small style="font-weight:400; color:#748492;">—</small></h1>
+        <span id="welcomeMessage" style="font-size: 16px; color: #4E5E6C; font-weight: 500;"></span>
+    </div>
+
+    <!-- Right side: Info + Month dropdown -->
+        <div style="display:flex; align-items: center; gap: 8px;"> 
+        <span class="info-tooltip" 
+              data-info="Select a month to filter the dashboard data. New months automatically appear after you add your first expense in that new month (Step 2)."
+        >
+            <i class="fa-solid fa-circle-info"></i>
+        </span>
+        <span style="font-size: 15px; color: #748492; font-weight: 500;">Viewing:</span>
+        <select id="monthDropdown" onchange="handleMonthChange(this)" style="padding: 4px 8px; font-size: 14px;">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+</div>
+
+        <div class="cards-grid-3" id="cardsGrid">
+        </div>
+
+        <div class="stacked-grid-container" style="margin-top: 30px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+
+            <div class="card chart-box" style="min-width: 0;">
+                <h2 style="margin-top: 0;"><i class="fa-solid fa-chart-pie"></i> Spending Breakdown</h2>
+                <p style="font-size: 15px; color: #748492;">View how your total spending is distributed across categories.</p>
+                <canvas id="expenseChart" style="max-height: 350px;"></canvas>
+                <button onclick="location.href='expenses.html'" class="main-cta" style="margin-top: 15px;">
+                    Add Daily Expense
+                </button>
+            </div>
+
+            <div class="card" style="min-width: 0;">
+                <h2><i class="fa-solid fa-bullseye"></i> Savings Goal Progress</h2>
+                <div id="savingsProgressContent">
+                    <canvas id="savingsChart" style="max-height: 250px; margin-top: 10px;"></canvas>
+                    <div id="savingsResultBox" style="margin-top: 15px; font-size: 15px;"></div>
+                </div>
+                <p id="noSavingsMessage" style="text-align: center; color: #748492; margin-top: 20px; display: none;">
+                    <i class="fa-solid fa-exclamation-circle"></i> Please complete Step 3: Savings Plan.
+                </p>
+                <button onclick="location.href='savings.html'" class="main-cta" style="margin-top: 15px;">
+                    Update Savings Plan
+                </button>
+            </div>
+
+            <div class="card" style="min-width: 0;">
+                <h2><i class="fa-solid fa-list-check"></i> Fixed Expense Details</h2>
+                <div id="fixedList" style="margin-top:12px; font-size: 16px;"></div>
+                <p style="font-size: 14px; margin-top: 15px; border-top: 1px dashed #E0E0E0; padding-top: 10px;">
+                    These values were set in the Budget Setup (Step 1).
+                </p>
+            </div>
+
+            <div class="card" style="min-width: 0;">
+                <h2><i class="fa-solid fa-calculator"></i> Budget Summary</h2>
+                <div id="summaryBox" style="margin-top:12px; font-size: 16px;"></div>
+            </div>
+
+            <div class="card" style="min-width: 0;">
+                <h2><i class="fa-solid fa-gauge-high"></i> Expense Tracker</h2>
+                <div id="trackerBox" style="margin-top:12px; font-size:16px;">
+                    <p style="color:#748492;">Loading daily spending analysis...</p>
+                </div>
+            </div>
+
+            <div id="aiAdvisorCard" class="card" style="min-width:0; background:#FFE680; border-radius:12px; padding:18px; box-shadow:0 3px 8px rgba(255,193,7,0.4); position:relative;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <div class="robot-container" style="position:relative;">
+                        <i class="fa-solid fa-robot robot-head" style="font-size:30px;color:#2E86C1;"></i>
+                        <div class="speech-bubble" style="position:absolute; top:-8px; right:-10px;">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;font-size:18px;color:#2E86C1;margin-bottom:6px;">
+                            Smart AI Advisor
+                        </div>
+                        <div id="aiText" style="min-height:60px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <div class="card" style="margin-top: 30px; width:100%;">
+            <h2><i class="fa-solid fa-history"></i> Recent Transactions</h2>
+            <div class="list" style="max-height: 250px; overflow-y:auto; margin-top: 15px;">
+                <table id="txTable" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px; text-align: left;">Category</th>
+                            <th style="padding: 10px; text-align: left;">Amount (RM)</th>
+                            <th style="padding: 10px; text-align: left;">Date & Note</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <p id="emptyTxMessage" style="text-align: center; color: #748492; margin-top: 20px; display: none;">
+                    No transactions recorded yet. Use Step 2: Expenses.
+                </p>
+            </div>
+            <div class="export-buttons-container">
+                <button class="export-btn" onclick="exportTableToCSV('txTable', 'SmartExpense_Transactions.csv')">📄 Export CSV</button>
+            </div>
+        </div>
+
+    </div> </div> ```
+ <div id="toast"
+     style="position: fixed; bottom: 30px; right: 30px;
+            background: var(--accent-sage); color: var(--text-primary);
+            padding: 12px 20px; border-radius: 16px;
+            font-size: 14px; font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 9999;">
+</div>
+<script>
+// --- GLOBAL CONFIG & HELPERS ---
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? "http://localhost:8080" 
+    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
+const user_email = sessionStorage.getItem("se_current") || localStorage.getItem("se_remember");
+const user_id = sessionStorage.getItem('se_userId') || localStorage.getItem('se_userId');
+
+function getToken() {
+    return sessionStorage.getItem('se_token') || localStorage.getItem('se_token');
+}
+
+// Check for login immediately
+if (!user_email || !user_id) {
+    alert("Please log in again!");
+    location.href = "register.html";
+}
+
+// --- Corrected loadMonthDropdown Function ---
+async function loadMonthDropdown() {
+  const token = getToken();
+  if (!token) return;
+
+  const dropdown = document.getElementById('monthDropdown');
+  dropdown.innerHTML = '<option value="">Loading Months...</option>';
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/months`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+        console.error('Server returned an error when fetching months:', res.status);
+        dropdown.innerHTML = '<option value="">Error Loading Months</option>';
+        return; 
+    }
+
+    const months = await res.json();
+    const monthList = Array.isArray(months)
+      ? months
+      : (months && months.months) || (months ? [months] : []);
+
+    dropdown.innerHTML = "";
+    
+    // Create an option for the current month if it's not in the list, 
+    // or just use the first month as the default selection.
+    let defaultMonth = monthList.length > 0 ? monthList[0].month_year : new Date().toISOString().slice(0, 7);
+
+
+    if (monthList.length === 0) {
+      const opt = document.createElement('option');
+      opt.textContent = "No data available";
+      dropdown.appendChild(opt);
+      return;
+    }
+
+    monthList.forEach(m => {
+      const opt = document.createElement('option');
+      const monthValue = m.month_year || m; 
+      
+      opt.value = monthValue;
+      // ⭐ THE FIX: Display the month string directly
+      opt.textContent = monthValue; 
+      
+      // Set the first available month as selected by default
+      if (monthValue === defaultMonth) {
+          opt.selected = true;
+      }
+
+      dropdown.appendChild(opt);
+    });
+    
+    // Trigger data load for the default (latest) month right after populating the list
+    if (defaultMonth) {
+        fetchDashboardData(defaultMonth);
+    }
+  } catch (err) {
+    console.error('Error loading month dropdown:', err);
+    dropdown.innerHTML = '<option value="">Network Error</option>';
+  }
+}
+
+const dropdown = document.getElementById("monthDropdown");
+if (dropdown) {
+  dropdown.addEventListener("change", async () => {
+    await fetchDashboardData(dropdown.value);
+    showToastForMonth(dropdown.value);
+  });
+}
+
+// Global scope for Chart.js instance (Explicitly attach to window)
+window.expenseChartInstance = null; 
+window.savingsChartInstance = null;
+window.aiTypingInterval = null;
+// --- CHART CONSTANTS ---
+const CHART_COLORS = [
+    '#3498DB', // Pastel Blue
+    '#9B59B6', // Amethyst
+    '#1ABC9C', // Emerald
+    '#F1C40F', // Sunflower
+    '#E67E22', // Carrot
+    '#2ECC71', // Green Sea
+    '#95A5A6', // Concrete
+    '#C0392B'  // Pomegranate (Red for warnings)
+]; 
+const LIGHT_TEXT = '#4E5E6C';
+const BLUE_ACCENT = '#3498DB'; 
+
+// --- 1. SECURE DATA FETCH AND MAIN RENDER ---
+
+/**
+ * Fetches all user data (Setup, Expenses, Savings) securely from the API 
+ * and saves it locally for dashboard rendering.
+ */
+/**
+ * Fetches ALL user data (Setup, Expenses, Savings) securely from the API 
+ * in a single, efficient request, using the /api/dashboard route.
+ */
+async function fetchDashboardData(selectedMonth = null) {
+    const token = getToken();
+    if (!token || !user_id) {
+        return location.href = "register.html";
+    }
+
+    const headers = { "Authorization": `Bearer ${token}` };
+    
+    // Construct the query string for month selection
+    const monthQuery = selectedMonth ? `?month=${selectedMonth}` : '';
+    
+    try {
+        // ⭐️ FIX: Use the single /api/dashboard endpoint for Budget and Expenses
+        const dashboardRes = await fetch(`${API_BASE_URL}/api/dashboard/${user_id}${monthQuery}`, { headers });
+        const savingsRes = await fetch(`${API_BASE_URL}/api/savings`, { headers }); 
+        
+        const dashboardData = await dashboardRes.json();
+        const savingData = await savingsRes.json();
+
+        if (!dashboardData.success) {
+            throw new Error(dashboardData.message || "Dashboard data fetch failed.");
+        }
+
+        // --- Save fresh data to local storage ---
+
+        localStorage.setItem('se_current_month_' + user_email, dashboardData.month_year);
+if (dashboardData.name) {
+    localStorage.setItem('se_userName', dashboardData.name);
+}
+
+if (dashboardData.budget) {
+    localStorage.setItem('se_setup_' + user_email, JSON.stringify(dashboardData.budget));
+} else {
+    // If budget is null from the server, save 'null' to local storage
+    localStorage.setItem('se_setup_' + user_email, 'null'); 
+}        // Use 'expenses' key from the dashboard response
+if (dashboardData.expenses) {
+    localStorage.setItem('se_expenses_' + user_email, JSON.stringify(dashboardData.expenses));
+} else {
+    // If no expenses data is returned, explicitly save an empty array.
+    localStorage.setItem('se_expenses_' + user_email, '[]'); 
+}        
+        // Save Savings data (already fixed in previous step, confirming keys)
+        if (savingData && savingData.target) {
+            localStorage.setItem('se_savings_' + user_email, JSON.stringify(savingData));
+        } else {
+            localStorage.removeItem('se_savings_' + user_email);
+        }
+
+    } catch (err) {
+        console.error('Failed to fetch dashboard data:', err);
+        document.querySelector('.content').innerHTML = `
+            <div style="padding:40px;text-align:center;color:#C0392B;">
+                ⚠️ Unable to load dashboard data. Please check your internet connection or try again later.
+            </div>`; 
+    }
+    
+    // Always call the main renderer after attempting the fetch
+    mainRender(); 
+}
+
+
+// Update the DOMContentLoaded block to:
+// dashboard.html (JavaScript section - Replace the existing block)
+
+    // dashboard.html (JavaScript section - **REPLACE** the existing DOMContentLoaded block with this one)
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // ⭐ Show welcome message once
+  displayWelcomeMessage();
+
+  // 🗓 Load dropdown only once
+  await loadMonthDropdown();
+
+  // 📅 Check if month in URL (e.g., ?month=2025-11)
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialMonth = urlParams.get("month");
+
+  // 🧠 Fetch data for the correct month
+  await fetchDashboardData(initialMonth);
+
+  // 🧩 Update dropdown to match selected month (if present)
+  const dropdown = document.getElementById("monthDropdown");
+  if (dropdown) {
+    dropdown.value = initialMonth || dropdown.value;
+
+    // 🪄 Add listener for month change + toast notification
+    dropdown.addEventListener("change", async () => {
+      await fetchDashboardData(dropdown.value);
+      showToast(`📊 Updated to ${dropdown.value}`);
+    });
+  }
+});
+
+/**
+ * Main function to read data from local storage (latest cloud sync) and render the dashboard UI.
+ */
+function mainRender() {
+    // Get data from local storage (now guaranteed to be the latest synced data)
+const setup = JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null');
+    const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user_email) || '[]');
+    const savingsGoal = JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null');
+
+    // --- Check if Setup is complete (CRITICAL CHECK) ---
+    if (!setup || !setup.income) { 
+    document.querySelector('.content').innerHTML = `
+        <div class="main-container" style="text-align: center; padding-top: 100px;">
+            <h2>Welcome!</h2>
+            <p>Please complete your **Budget Setup** first to view the dashboard.</p>
+            <button onclick="location.href='setup.html'" class="main-cta">Go to Step 1: Budget Setup</button>
+        </div>`;
+    return; 
+}
+
+// --- CORE CALCULATIONS ---
+const totalFixed = (setup.rent||0) + (setup.food||0) + (setup.internet||0) + (setup.others||0);
+const saved = expenses.filter(e=>e.category==='Savings').reduce((s,r)=>s+Number(r.amount),0);
+const totalDailySpending = expenses.filter(e=>e.category!=='Savings').reduce((s,r)=>s+Number(r.amount),0);
+const income = setup.income||0;
+const balance = income - totalFixed - totalDailySpending;
+const totalSpent = totalFixed + totalDailySpending;
+
+// 🟢 FIX: Retrieve the loaded month and calculate dates based on it.
+const loadedMonthYear = localStorage.getItem('se_current_month_' + user_email) || new Date().toISOString().slice(0, 7);
+const [year, month] = loadedMonthYear.split('-').map(Number);
+
+// Calculate total days in the loaded month
+const daysInMonth = new Date(year, month, 0).getDate();
+
+const today = new Date();
+
+// Determine how many days have passed in the loaded month:
+// 1. If the loaded month is the CURRENT calendar month, use today's date.
+// 2. Otherwise (historical month), assume the entire month has passed (use daysInMonth).
+const daysPassed = (month === today.getMonth() + 1 && year === today.getFullYear()) 
+    ? today.getDate() 
+    : daysInMonth; 
+
+// Calculate budget stats based on the corrected daysPassed/daysInMonth
+const averageDailyBudget = (income - totalFixed) / daysInMonth;
+const currentDailyAvgSpent = totalDailySpending / daysPassed;
+const daysLeft = daysInMonth - daysPassed; 
+
+// Keep this line for compatibility with existing code below (e.g., renderTrackerBox)
+const currentDayOfMonth = daysPassed;
+
+// Clear tracker box first
+const trackerBox = document.getElementById('trackerBox');
+if (trackerBox) trackerBox.innerHTML = "";
+
+    // 1. Render Stat Cards
+    document.getElementById('cardsGrid').innerHTML = `
+        <div class="stat-card" style="border-left-color: ${BLUE_ACCENT};">
+            <div class="stat-value">RM ${income.toFixed(2)}</div>
+            <div class="stat-title">Monthly Income</div>
+        </div>
+        <div class="stat-card" style="border-left-color: ${balance >= 0 ? '#1ABC9C' : '#C0392B'};">
+            <div class="stat-value">RM ${balance.toFixed(2)}</div>
+            <div class="stat-title">Est. Balance Left</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #C0392B;">
+            <div class="stat-value">RM ${totalSpent.toFixed(2)}</div>
+            <div class="stat-title">Total Spending</div>
+        </div>
+    `;
+
+    // 2. Render Fixed Expense Details
+    document.getElementById('fixedList').innerHTML = `
+        <div style="margin-bottom: 5px;"><strong>Rent:</strong> RM ${Number(setup.rent).toFixed(2)}</div>
+        <div style="margin-bottom: 5px;"><strong>Food Budget:</strong> RM ${Number(setup.food).toFixed(2)}</div>
+        <div style="margin-bottom: 5px;"><strong>Internet/Utilities:</strong> RM ${Number(setup.internet).toFixed(2)}</div>
+        <div style="margin-bottom: 5px;"><strong>Others:</strong> RM ${Number(setup.others||0).toFixed(2)}</div>
+    `;
+
+    // 3. Render Expense Tracker Card
+    (function renderTrackerBox() {
+        const totalFixed = (setup.rent||0) + (setup.food||0) + (setup.internet||0) + (setup.others||0);
+        const totalVariable = expenses.filter(e => e.category !== 'Savings').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+        
+        let trackerMsg = "";
+        // 🔴 Overspending
+        if (currentDailyAvgSpent > averageDailyBudget) {
+            trackerMsg = `
+                <div style="display:flex;align-items:center;gap:8px;color:#E74C3C;font-weight:bold;font-size:18px;">
+                    <i class="fa-solid fa-circle-exclamation"></i> Overspending Alert!
+                </div>
+                <div style="margin-top:5px;">Your average daily spend (<b>RM ${currentDailyAvgSpent.toFixed(2)}</b>) exceeds your daily budget (<b>RM ${averageDailyBudget.toFixed(2)}</b>).</div>
+                <div style="margin-top:5px;">If this continues, you might spend <b>RM ${(currentDailyAvgSpent * daysInMonth).toFixed(2)}</b>, exceeding your income of <b>RM ${income.toFixed(2)}</b>.</div>
+                <div style="margin-top:10px;color:#922B21;">
+                    <i class="fa-solid fa-chart-pie"></i> <b>Fixed:</b> RM ${totalFixed.toFixed(2)} | <b>Other Expenses:</b> RM ${totalVariable.toFixed(2)}
+                </div>
+            `;
+        } 
+        // 🟢 On Track
+        else {
+            const potentialSavings = (averageDailyBudget - currentDailyAvgSpent) * daysLeft;
+            trackerMsg = `
+                <div style="display:flex;align-items:center;gap:8px;color:#27AE60;font-weight:bold;font-size:18px;">
+                    <i class="fa-solid fa-circle-check"></i> On Track
+                </div>
+                <div style="margin-top:5px;">You’re spending <b>RM ${currentDailyAvgSpent.toFixed(2)}</b>/day, within your daily limit (<b>RM ${averageDailyBudget.toFixed(2)}</b>).</div>
+                <div style="margin-top:5px;">If you maintain this pace, you could save <b>RM ${potentialSavings.toFixed(2)}</b> this month!</div>
+                <div style="margin-top:10px;color:#117864;">
+                    <i class="fa-solid fa-chart-pie"></i> <b>Fixed:</b> RM ${totalFixed.toFixed(2)} | <b>Other Expenses:</b> RM ${totalVariable.toFixed(2)}
+                </div>
+            `;
+        }
+        document.getElementById('trackerBox').innerHTML = `
+            <div style="background:#F8F9F9;border-radius:10px;padding:14px;box-shadow:0 2px 5px rgba(0,0,0,0.1);line-height:1.5;">
+                ${trackerMsg}
+            </div>
+        `;
+    })();
+    
+    // 4. Render Budget Summary
+    document.getElementById('summaryBox').innerHTML = `
+        <div style="margin-bottom: 5px;"><strong>Total Fixed:</strong> RM ${totalFixed.toFixed(2)}</div>
+        <div style="margin-bottom: 5px;"><strong>Total Daily:</strong> RM ${totalDailySpending.toFixed(2)}</div>
+        <div style="margin-top: 10px; font-weight: bold; color: ${balance >= 0 ? '#5D7C70' : '#C0392B'};">Balance: RM ${balance.toFixed(2)}</div>
+    `;
+
+    // 5. Render Recent Transactions
+    const txTable = document.querySelector('#txTable tbody');
+    const recent = expenses.slice().sort((a,b)=>b.id - a.id).slice(0,5); 
+    
+    txTable.innerHTML = ''; 
+    document.getElementById('emptyTxMessage').style.display = 'none';
+
+    if(recent.length===0){
+        document.getElementById('emptyTxMessage').style.display = 'block';
+    } else {
+        recent.forEach(r=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 10px;">${r.category}</td>
+                <td style="padding: 10px; font-weight: bold;">RM ${Number(r.amount).toFixed(2)}</td>
+                <td style="padding: 10px; color: #748492;">${r.date} ${r.desc? '— ' + r.desc : ''}</td>`;
+            txTable.appendChild(tr);
+        });
+    }
+
+    // 6. Render Charts and AI Advisor
+    renderExpenseChart(setup, expenses);
+    renderSavingsProgress(savingsGoal, expenses); 
+    renderAIAdvisor(setup, expenses, savingsGoal);
+}
+
+// --- 2. LOGOUT FUNCTION (Secured Cleanup) ---
+window.logout = function() {
+    // Clear all tokens and session data
+    sessionStorage.clear();
+    localStorage.removeItem("se_remember");
+    localStorage.removeItem("se_token");
+    localStorage.removeItem("se_userId");
+    
+    // Clear all dashboard data to force fresh load next time
+    localStorage.removeItem('se_setup_' + user_email);
+    localStorage.removeItem('se_expenses_' + user_email);
+    localStorage.removeItem('se_savings_' + user_email);
+
+    alert("You have successfully logged out");
+    location.href = "register.html";
+}
+
+
+// --- 3. CHART AND ADVISOR FUNCTIONS (Original logic restored) ---
+
+function renderExpenseChart(setup, expenses) {
+    const byCat = {
+        'Rent': setup.rent || 0,
+        'Fixed Food': setup.food || 0,
+        'Internet': setup.internet || 0,
+        'Fixed': setup.others || 0, // renamed
+    };
+
+    expenses.filter(e => e.category !== 'Savings').forEach(e => {
+        const categoryName = e.category === 'Food' ? 'Daily Food' : e.category;
+        byCat[categoryName] = (byCat[categoryName] || 0) + Number(e.amount);
+    });
+
+    // Remove zero values
+    for (const key in byCat) {
+        if (byCat[key] === 0) delete byCat[key];
+    }
+
+    // Calculate total for percentages
+    const total = Object.values(byCat).reduce((sum, val) => sum + val, 0);
+
+    // Add % to labels
+    const labelsWithPercent = Object.keys(byCat).map(key => {
+        const percent = ((byCat[key] / total) * 100).toFixed(1);
+        return `${key} (${percent}%)`;
+    });
+
+    if (window.expenseChartInstance) {
+        window.expenseChartInstance.destroy();
+        window.expenseChartInstance = null;
+    }
+
+    window.expenseChartInstance = new Chart(document.getElementById('expenseChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: labelsWithPercent,
+            datasets: [{
+                data: Object.values(byCat),
+                backgroundColor: CHART_COLORS.slice(0, Object.keys(byCat).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right', labels: { color: LIGHT_TEXT } },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.label}: RM ${ctx.parsed.toFixed(2)}`
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+function renderSavingsProgress(savingsGoal, expenses) {
+    const savingsContainer = document.getElementById('savingsProgressContent');
+    const noSavingsMsg = document.getElementById('noSavingsMessage');
+    const savingsResultBox = document.getElementById('savingsResultBox');
+
+    // The 'recordedSavings' calculation from expenses is now redundant 
+    // since the API returns the official saved amount.
+    // const recordedSavings = expenses.filter(e=>e.category==='Savings').reduce((s,r)=>s+Number(r.amount),0); // DELETE OR COMMENT OUT THIS LINE
+    
+    // ⭐️ FIX 3: Check for the new key: 'target'
+    if (!savingsGoal || !savingsGoal.target) {
+        savingsContainer.style.display = 'none';
+        noSavingsMsg.style.display = 'block';
+        return;
+    }
+
+    savingsContainer.style.display = 'block';
+    noSavingsMsg.style.display = 'none';
+
+    // ⭐️ FIX 4: Use the correct keys from the API response
+    const target = savingsGoal.target || 0; 
+    const saved = savingsGoal.saved_amount || 0; // Use the official saved amount from the API
+    const progressPercent = (saved / target) * 100;
+    const remaining = Math.max(target - saved, 0); 
+    const months = savingsGoal.months || 1; // Get 'months' from savingsGoal
+
+    savingsResultBox.innerHTML = `
+        <div><strong>Goal:</strong> ${savingsGoal.goal || 'Savings Target'}</div>
+        <div><strong>Target Amount:</strong> RM ${target.toFixed(2)}</div>
+        <div><strong>Progress:</strong> RM ${saved.toFixed(2)} (${progressPercent.toFixed(1)}%).</div>
+        <div style="font-weight: bold; color: ${BLUE_ACCENT};">Remaining: RM ${remaining.toFixed(2)}.</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Time Goal: ${months} Months.</div>
+    `;
+
+    if (savingsChartInstance) {
+        savingsChartInstance.destroy();
+        // 🟢 CRITICAL FIX: Nullify the global variable after destruction
+        savingsChartInstance = null;
+    }
+    window.savingsChartInstance = new Chart(document.getElementById('savingsChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Saved', 'Remaining'],
+            datasets: [{
+                data: [saved, remaining],
+                // ... (Chart background colors logic)
+                backgroundColor: [saved >= target ? BLUE_ACCENT : BLUE_ACCENT, saved >= target ? '#D0D0D0' : '#748492']
+            }]
+        },
+        options: {
+            // ... (Chart options)
+        }
+    });
+}
+
+function renderAIAdvisor(setup, expenses, savingsData) {
+    const aiText = document.getElementById('aiText');
+    if (!aiText) return;
+    aiText.innerHTML = ""; // reset container
+
+    const suggestions = [];
+
+    // 🌟 Helper for styled message boxes
+    const msg = (icon, text, color, bg) => `
+        <div style="
+            background:${bg};
+            color:${color};
+            padding:10px 14px;
+            margin:6px 0;
+            border-radius:10px;
+            font-weight:500;
+            line-height:1.5;
+            box-shadow:0 1px 3px rgba(0,0,0,0.1);
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+        ">
+            <i class="fa-solid ${icon}" style="margin-top:3px;font-size:18px;"></i>
+            <div>${text}</div>
+        </div>`;
+
+    // ✅ If user hasn't done setup
+    if (!setup || !setup.income) {
+        suggestions.push(msg("fa-circle-exclamation",
+            'Please complete your <b>Budget Setup (Step 1)</b> to get AI analysis.',
+            '#333', '#FFE9C4'));
+        return showTypingEffect(aiText, suggestions);
+    }
+
+    // 🧮 Data
+    const income = Number(setup.income);
+    const rent = Number(setup.rent || 0);
+    const food = Number(setup.food || 0);
+    const internet = Number(setup.internet || 0);
+    const others = Number(setup.others || 0);
+
+    const totalFixed = rent + food + internet + others;
+    const totalExpenses = expenses.filter(e => e.category !== 'Savings').reduce((sum, e) => sum + Number(e.amount), 0);
+    const totalSavingsRecorded = expenses.filter(e => e.category === 'Savings').reduce((sum, e) => sum + Number(e.amount), 0);
+    const grandTotal = totalFixed + totalExpenses + totalSavingsRecorded;
+    const usedPercent = (grandTotal / income) * 100;
+    const remaining = income - grandTotal;
+
+    // 💸 Expense overview
+    suggestions.push(msg(
+        "fa-wallet",
+        `<b>Total Used:</b> RM ${grandTotal.toFixed(2)} / RM ${income.toFixed(2)} 
+        <br><span style="font-size:0.9em;">(${usedPercent.toFixed(1)}% of your total budget)</span>`,
+        '#145A32', '#D5F5E3'
+    ));
+
+    // 💼 Breakdown
+    suggestions.push(`
+        <div style="background:#EBF5FB; color:#1B4F72; padding:10px 14px; border-radius:10px; margin-top:4px;">
+            <i class="fa-solid fa-house"></i> <b>Fixed Expenses Breakdown</b><br>
+            • Rent: RM ${rent.toFixed(2)}<br>
+            • Food Budget: RM ${food.toFixed(2)}<br>
+            • Internet: RM ${internet.toFixed(2)}<br>
+            • Others: RM ${others.toFixed(2)}<br>
+            <b>Total Fixed:</b> RM ${totalFixed.toFixed(2)}
+        </div>
+    `);
+
+    // 💬 Budget advice
+    if (usedPercent >= 100)
+        suggestions.push(msg("fa-triangle-exclamation",
+            `<b>Over budget!</b> You’ve spent ${usedPercent.toFixed(1)}%. Cut back immediately.`,
+            '#7B241C', '#F5B7B1'));
+    else if (usedPercent >= 90)
+        suggestions.push(msg("fa-circle-exclamation",
+            `Be careful! You’ve used ${usedPercent.toFixed(1)}%. Only RM ${remaining.toFixed(2)} left.`,
+            '#784212', '#FAD7A0'));
+    else if (usedPercent >= 70)
+        suggestions.push(msg("fa-lightbulb",
+            `You’ve spent ${usedPercent.toFixed(1)}%. Try reducing variable expenses.`,
+            '#7D6608', '#FCF3CF'));
+    else if (usedPercent >= 50)
+        suggestions.push(msg("fa-circle-check",
+            `Good job! You’ve used ${usedPercent.toFixed(1)}%. Keep maintaining this balance.`,
+            '#0B5345', '#D1F2EB'));
+    else
+        suggestions.push(msg("fa-leaf",
+            `Excellent control! Only ${usedPercent.toFixed(1)}% spent — RM ${remaining.toFixed(2)} left.`,
+            '#186A3B', '#D4EFDF'));
+
+    // 💰 Savings section
+    const target = savingsData ? savingsData.target : 0;
+    const saved = savingsData ? savingsData.saved_amount : 0;
+
+    if (!savingsData || !target) {
+        suggestions.push(msg("fa-piggy-bank",
+            `No savings goal found. Please set one in <b>Step 3: Savings Plan</b>.`,
+            '#333', '#FFF3CD'));
+    } else {
+        const p = (saved / target) * 100;
+        const col = p >= 90 ? '#186A3B' : p >= 60 ? '#7D6608' : '#943126';
+        const bg  = p >= 90 ? '#D4EFDF' : p >= 60 ? '#FEF5E7' : '#FADBD8';
+
+        let icon = "fa-chart-line";
+        if (p >= 100) icon = "fa-trophy";
+        else if (p >= 90) icon = "fa-star";
+        else if (p >= 70) icon = "fa-bolt";
+        else if (p >= 50) icon = "fa-circle-half-stroke";
+        else if (p >= 30) icon = "fa-chart-simple";
+
+        let text;
+        if (p >= 100) text = `<b>Congratulations!</b> You’ve reached your goal of RM ${target.toFixed(2)}!`;
+        else if (p >= 90) text = `${p.toFixed(1)}% achieved — almost there!`;
+        else if (p >= 70) text = `${p.toFixed(1)}% — past the tough part!`;
+        else if (p >= 50) text = `Halfway mark reached — RM ${saved.toFixed(2)} saved!`;
+        else text = `Only ${p.toFixed(1)}% saved. Add more regularly to grow your savings.`;
+
+        suggestions.push(msg(icon, text, col, bg));
+    }
+
+    showTypingEffect(aiText, suggestions);
+}
+
+// ✅ Clean typing effect (self-contained, safe)
+// ✅ Safe typing effect: no duplicates, handles rapid calls
+function showTypingEffect(container, messages, typingSpeed = 15, delayBetween = 700) {
+    // Stop any ongoing typing
+    if (container._typingInterval) {
+        clearInterval(container._typingInterval);
+        container._typingInterval = null;
+    }
+    if (container._nextTimeout) {
+        clearTimeout(container._nextTimeout);
+        container._nextTimeout = null;
+    }
+
+    container.innerHTML = ""; // clear container
+    let msgIndex = 0;
+
+    function typeMessage(msg, callback) {
+        const box = document.createElement("div");
+        container.appendChild(box);
+        let charIndex = 0;
+
+        container._typingInterval = setInterval(() => {
+            box.innerHTML = msg.slice(0, charIndex + 1);
+            charIndex++;
+            if (charIndex > msg.length) {
+                clearInterval(container._typingInterval);
+                container._typingInterval = null;
+                container._nextTimeout = setTimeout(callback, delayBetween);
+            }
+        }, typingSpeed);
+    }
+
+    function next() {
+        if (msgIndex < messages.length) {
+            typeMessage(messages[msgIndex], () => {
+                msgIndex++;
+                next();
+            });
+        }
+    }
+
+    next();
+}
+
+// dashboard.html 
+
+function handleMonthChange(selectElement) {
+    const selectedMonth = selectElement.value;
+    
+    // Only fetch if a valid month is selected (i.e., not the initial "Loading...")
+    if (!selectedMonth || selectedMonth === 'Loading...') return; 
+
+    // 1. Construct the new URL and update the browser history (optional, but good)
+    const newBrowserUrl = window.location.pathname + `?month=${selectedMonth}`;
+    history.pushState(null, '', newBrowserUrl);
+
+    // 2. Fetch the data for the new month
+    fetchDashboardData(selectedMonth); 
+}
+// --- EXPORT FUNCTIONALITY ---
+
+function displayWelcomeMessage() {
+    // 1. Get elements and stored values
+    const welcomeSpan = document.getElementById('welcomeMessage'); 
+    
+    // Check if the span element exists before trying to update it
+    if (!welcomeSpan) return;
+
+    // Try to get the saved name first
+let displayName = localStorage.getItem('se_userName');    
+    // 2. Fallback to Email Parsing (if the name hasn't been saved yet)
+    if (!displayName) {
+        const userEmail = sessionStorage.getItem("se_current") || localStorage.getItem("se_remember");
+        
+        if (userEmail) {
+            // Logic to convert 'john.doe@email.com' -> 'John Doe'
+            displayName = userEmail.split('@')[0]; 
+            displayName = displayName.replace(/[._]/g, ' '); 
+            displayName = displayName.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+    }
+    
+    // 3. Display the final message
+    if (displayName) {
+        welcomeSpan.textContent = `Welcome, ${displayName}`;
+    }
+}
+window.exportTableToCSV = function(tableId, filename) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+
+    let csv = [];
+    const rows = table.querySelectorAll('tbody tr');
+    
+    // 1. Get Header Row
+    const headerRow = table.querySelector('thead tr');
+    if (headerRow) {
+        let rowData = [];
+        headerRow.querySelectorAll('th').forEach(th => {
+            rowData.push('"' + th.innerText.replace(/\s\(RM\)/, '').trim() + '"');
+        });
+        csv.push(rowData.join(','));
+    }
+
+    // 2. Get Data Rows
+    rows.forEach(row => {
+        let rowData = [];
+        row.querySelectorAll('td').forEach(cell => {
+            let cellData = cell.innerText.replace(/"/g, '""').trim();
+            rowData.push('"' + cellData + '"');
+        });
+        csv.push(rowData.join(','));
+    });
+
+    // 3. Create Blob and Download
+    const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    const note = document.createElement('div');
+    note.textContent = "✅ Transactions exported successfully!";
+    note.style = "position:fixed;bottom:20px;right:20px;background:#2ECC71;color:#fff;padding:10px 16px;border-radius:8px;box-shadow:0 3px 6px rgba(0,0,0,0.2);";
+    document.body.appendChild(note);
+    setTimeout(()=>note.remove(), 3000);
+}
+// 🌿 Create toast container once (only one)
+const toastContainer = document.createElement('div');
+toastContainer.id = 'toastContainer';
+toastContainer.style.position = 'fixed';
+toastContainer.style.bottom = '20px';
+toastContainer.style.right = '20px';
+toastContainer.style.zIndex = '9999';
+document.body.appendChild(toastContainer);
+
+// 🌿 Function to show toast
+function showToastForMonth(monthValue) {
+    const [year, month] = monthValue.split("-");
+    const date = new Date(`${year}-${month}-01`);
+    const formatted = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+    const message = `Updated to ${formatted}`;
+
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.padding = '14px 20px';
+    toast.style.marginTop = '10px';
+    toast.style.borderRadius = '8px';
+    toast.style.fontSize = '16px';
+    toast.style.color = '#fff';
+    toast.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+    toast.style.transition = 'all 0.5s ease';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(40px)';
+    toast.style.background = '#6CA08D';
+
+    toastContainer.appendChild(toast);
+
+    // Slide in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(0)';
+    }, 50);
+
+    // Fade out after 3s
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(40px)';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+
+</script>
+</body>
+</html>
+
