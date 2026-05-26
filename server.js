@@ -117,7 +117,7 @@ const queryAsync = async (text, params) => {
 
 const REQUIRED_SCHEMA = {
     users: ['id', 'name', 'email', 'password_hash'],
-    budgets: ['user_id', 'income', 'rent', 'food', 'internet', 'others', 'month_year', 'created_at'],
+    budgets: ['user_id', 'income', 'rent', 'food', 'internet', 'others', 'month_year'],
     expenses: ['id', 'user_id', 'amount', 'category', 'description', 'expense_date', 'month_year'],
     savings: ['user_id', 'target', 'months', 'saved_amount', 'updated_at'],
     password_resets: ['user_id', 'token', 'created_at']
@@ -300,6 +300,27 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// GET Budget Data using query string, e.g. /api/budget/get?user_id=123
+app.get('/api/budget/get', authenticateToken, async (req, res) => {
+    const userId = req.query.user_id || req.query.userId;
+    logDebug('BUDGET GET USER', { userId });
+    if (String(req.user.id) !== String(userId)) return res.status(403).json({ success: false, message: 'Unauthorized access to user data.' });
+
+    try {
+        const sql = 'SELECT income, rent, food, internet, others, month_year FROM budgets WHERE user_id = $1 ORDER BY month_year DESC LIMIT 1';
+        const results = await queryAsync(sql, [userId]);
+
+        if (results.length > 0) {
+            res.status(200).json({ success: true, budget: results[0] });
+        } else {
+            res.status(200).json({ success: true, budget: null, message: 'No budget setup found.' });
+        }
+    } catch (error) {
+        logError('BUDGET GET ERROR', error, { userId });
+        res.status(500).json({ success: false, message: 'Server error loading budget data.' });
+    }
+});
+
 // GET Budget Data
 app.get('/api/budget/:userId', authenticateToken, async (req, res) => {
     const userId = req.params.userId;
@@ -307,7 +328,7 @@ app.get('/api/budget/:userId', authenticateToken, async (req, res) => {
     if (String(req.user.id) !== userId) return res.status(403).json({ success: false, message: 'Unauthorized access to user data.' });
 
     try {
-        const sql = 'SELECT income, rent, food, internet, others FROM budgets WHERE user_id = $1';
+        const sql = 'SELECT income, rent, food, internet, others, month_year FROM budgets WHERE user_id = $1 ORDER BY month_year DESC LIMIT 1';
         const results = await queryAsync(sql, [userId]);
 
         if (results.length > 0) {
@@ -532,7 +553,7 @@ app.get('/api/dashboard/:userId', authenticateToken, async (req, res) => {
             `SELECT income, rent, food, internet, others, month_year 
              FROM budgets 
              WHERE user_id = $1 
-             ORDER BY month_year DESC, created_at DESC 
+             ORDER BY month_year DESC 
              LIMIT 1`, 
             [userId]
         );

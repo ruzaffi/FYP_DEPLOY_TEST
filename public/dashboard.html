@@ -651,6 +651,18 @@ const CHART_COLORS = [
 const LIGHT_TEXT = '#4E5E6C';
 const BLUE_ACCENT = '#3498DB'; 
 
+function normalizeBudget(budget) {
+    if (!budget) return null;
+    return {
+        ...budget,
+        income: Number(budget.income || 0),
+        rent: Number(budget.rent || 0),
+        food: Number(budget.food || 0),
+        internet: Number(budget.internet || 0),
+        others: Number(budget.others || 0)
+    };
+}
+
 // --- 1. SECURE DATA FETCH AND MAIN RENDER ---
 
 /**
@@ -675,29 +687,37 @@ async function fetchDashboardData(selectedMonth = null) {
     try {
         // ⭐️ FIX: Use the single /api/dashboard endpoint for Budget and Expenses
         const dashboardRes = await fetch(`/api/dashboard/${user_id}${monthQuery}`, { headers });
+        const budgetRes = await fetch(`/api/budget/get?user_id=${encodeURIComponent(user_id)}`, { headers });
         const savingsRes = await fetch('/api/savings', { headers });
         
-        const dashboardData = await dashboardRes.json();
+        const budgetData = await budgetRes.json();
+        const dashboardData = dashboardRes.ok
+            ? await dashboardRes.json()
+            : { success: false, expenses: [], month_year: selectedMonth || new Date().toISOString().slice(0, 7) };
         const savingData = await savingsRes.json();
 
+        if (!budgetData.success) {
+            throw new Error(budgetData.message || "Budget data fetch failed.");
+        }
         if (!dashboardData.success) {
-            throw new Error(dashboardData.message || "Dashboard data fetch failed.");
+            console.error('Dashboard data fetch failed; rendering budget with empty expenses.', dashboardData.message || dashboardRes.status);
         }
 
         // --- Save fresh data to local storage ---
 
-        localStorage.setItem('se_current_month_' + user_email, dashboardData.month_year);
+        localStorage.setItem('se_current_month_' + user_email, dashboardData.month_year || budgetData.budget?.month_year || new Date().toISOString().slice(0, 7));
 if (dashboardData.name) {
     localStorage.setItem('se_userName', dashboardData.name);
 }
 
-if (dashboardData.budget) {
-    localStorage.setItem('se_setup_' + user_email, JSON.stringify(dashboardData.budget));
+const budget = normalizeBudget(budgetData.budget || dashboardData.budget);
+if (budget) {
+    localStorage.setItem('se_setup_' + user_email, JSON.stringify(budget));
 } else {
     // If budget is null from the server, save 'null' to local storage
     localStorage.setItem('se_setup_' + user_email, 'null'); 
 }        // Use 'expenses' key from the dashboard response
-if (dashboardData.expenses) {
+if (dashboardData.success && dashboardData.expenses) {
     localStorage.setItem('se_expenses_' + user_email, JSON.stringify(dashboardData.expenses));
 } else {
     // If no expenses data is returned, explicitly save an empty array.
@@ -760,7 +780,7 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 function mainRender() {
     // Get data from local storage (now guaranteed to be the latest synced data)
-const setup = JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null');
+const setup = normalizeBudget(JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null'));
     const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user_email) || '[]');
     const savingsGoal = JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null');
 
@@ -776,10 +796,10 @@ const setup = JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null
 }
 
 // --- CORE CALCULATIONS ---
-const totalFixed = (setup.rent||0) + (setup.food||0) + (setup.internet||0) + (setup.others||0);
+const totalFixed = setup.rent + setup.food + setup.internet + setup.others;
 const saved = expenses.filter(e=>e.category==='Savings').reduce((s,r)=>s+Number(r.amount),0);
 const totalDailySpending = expenses.filter(e=>e.category!=='Savings').reduce((s,r)=>s+Number(r.amount),0);
-const income = setup.income||0;
+const income = setup.income;
 const balance = income - totalFixed - totalDailySpending;
 const totalSpent = totalFixed + totalDailySpending;
 
@@ -837,7 +857,7 @@ if (trackerBox) trackerBox.innerHTML = "";
 
     // 3. Render Expense Tracker Card
     (function renderTrackerBox() {
-        const totalFixed = (setup.rent||0) + (setup.food||0) + (setup.internet||0) + (setup.others||0);
+        const totalFixed = setup.rent + setup.food + setup.internet + setup.others;
         const totalVariable = expenses.filter(e => e.category !== 'Savings').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
         
         let trackerMsg = "";
@@ -930,10 +950,10 @@ window.logout = function() {
 
 function renderExpenseChart(setup, expenses) {
     const byCat = {
-        'Rent': setup.rent || 0,
-        'Fixed Food': setup.food || 0,
-        'Internet': setup.internet || 0,
-        'Fixed': setup.others || 0, // renamed
+        'Rent': setup.rent,
+        'Fixed Food': setup.food,
+        'Internet': setup.internet,
+        'Fixed': setup.others, // renamed
     };
 
     expenses.filter(e => e.category !== 'Savings').forEach(e => {
