@@ -62,7 +62,7 @@ const queryAsync = async (text, params) => {
 
 // 🚀 Redirect root domain request directly to your login interface
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // --- API Endpoints ---
