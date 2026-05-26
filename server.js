@@ -28,7 +28,7 @@ const allowedOrigins = [
   'http://localhost:5500',
   'https://smartexpenseai.site',
   'https://www.smartexpenseai.site',
-  'https://gentle-dominion-474410-t3.as.r.appspot.com'
+  'https://fyp-smartexpense-backend.onrender.com' // 🚀 Ditambah supaya tak kena block dengan server sendiri!
 ];
 
 app.use(cors({
