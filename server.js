@@ -76,6 +76,7 @@ app.post('/api/register', async (req, res) => {
         await queryAsync(sql, [name, email, hashedPassword]);
         res.status(201).json({ success: true, message: 'Registration successful.' });
     } catch (error) {
+        console.error(error);
         if (error.code === '23505') 
             return res.status(409).json({ success: false, message: 'Email already registered.' });
         console.error('Register Error:', error);
