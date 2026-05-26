@@ -278,10 +278,6 @@ have an account? Login</div>
  
 <script>
   
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
-
 const ICON_HIDDEN_CLASS = "fas fa-eye-slash";
 const ICON_VISIBLE_CLASS = "fas fa-eye";
  
@@ -377,7 +373,7 @@ registerBtn.addEventListener("click", async () => {
   }
  
   try {
-    const res = await fetch(`${API_BASE_URL}/api/register`, {
+    const res = await fetch('/api/register', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, pass })

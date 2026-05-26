@@ -378,11 +378,6 @@
     </div>
 
 <script>
-// Use the same BASE URL as your setup page
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
-
 // Helper function to retrieve the token (Copied from setup.html)
 function getToken() {
     return sessionStorage.getItem('se_token') || localStorage.getItem('se_token');
@@ -408,7 +403,7 @@ function getUserId() {
     // --- 2. Load existing savings data from DB on page load ---
     (async function loadSavings() {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/savings`, {
+            const res = await fetch('/api/savings', {
                 headers: { 
                     "Authorization": `Bearer ${token}` 
                 }
@@ -445,7 +440,7 @@ function getUserId() {
         const data = { target, months };
         
         try {
-            const res = await fetch(`${API_BASE_URL}/api/savings/target`, {
+            const res = await fetch('/api/savings/target', {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -481,7 +476,7 @@ function getUserId() {
         
         try {
             // PATCH request to update the saved amount
-            const res = await fetch(`${API_BASE_URL}/api/savings/current`, {
+            const res = await fetch('/api/savings/current', {
                 method: "PATCH",
                 headers: { 
                     "Content-Type": "application/json",

@@ -301,11 +301,6 @@ have an account? Register</div>
     </div>
  
 <script>
-// Base URL for your deployed API on App Engine
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
-
 // Icon classes for Font Awesome
 const ICON_HIDDEN_CLASS = "fas fa-eye-slash"; 
 const ICON_VISIBLE_CLASS = "fas fa-eye"; 
@@ -344,7 +339,7 @@ loginBtn.addEventListener("click", async () => {
     loginBtn.disabled = true; // Disable button to prevent double-click
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/login`, {
+        const res = await fetch('/api/login', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, pass })

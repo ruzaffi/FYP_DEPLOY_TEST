@@ -392,10 +392,6 @@
 </div>
 
 <script>
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
-
 /**
  * Helper function to retrieve the token from storage (for security)
  */
@@ -420,7 +416,7 @@ function getToken() {
         if (!user_id || !token) return;
 
         try {
-            const res = await fetch(`${API_BASE_URL}/api/budget/${user_id}`, {
+            const res = await fetch(`/api/budget/${user_id}`, {
                 headers: { 
                     // CRUCIAL: Send the token for authentication
                     "Authorization": `Bearer ${token}` 
@@ -469,7 +465,7 @@ function getToken() {
         };
 
         try {
-            const res = await fetch(`${API_BASE_URL}/api/budget/save`, {
+            const res = await fetch('/api/budget/save', {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",

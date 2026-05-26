@@ -496,10 +496,6 @@ button.delete-btn:hover {
 </div>
 
 <script>
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
-
 function getToken() {
     return sessionStorage.getItem('se_token') || localStorage.getItem('se_token');
 }
@@ -578,7 +574,7 @@ const expense = {
         
         // --- Sync to database ---
         try {
-            const res = await fetch(`${API_BASE_URL}/api/expense/add`, {
+            const res = await fetch('/api/expense/add', {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -615,7 +611,7 @@ window.deleteExpense = async function(expenseId) {
         // [OLD LOGIC REMOVED]: We no longer need to look up the full expense object
         // because the server now only needs user_id and the unique expenseId.
         
-        const res = await fetch(`${API_BASE_URL}/api/expense/delete`, {
+        const res = await fetch('/api/expense/delete', {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -671,7 +667,7 @@ window.deleteExpense = async function(expenseId) {
         if (!token || !user_id) return;
         
         try {
-            const res = await fetch(`${API_BASE_URL}/api/expense/${user_id}`, {
+            const res = await fetch(`/api/expense/${user_id}`, {
                 headers: { 
                     "Authorization": `Bearer ${token}` // <--- SECURE TOKEN
                 }

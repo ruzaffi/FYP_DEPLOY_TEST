@@ -548,9 +548,6 @@ h2#dashboardTitle {
 </div>
 <script>
 // --- GLOBAL CONFIG & HELPERS ---
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? "http://localhost:8080" 
-    : "https://gentle-dominion-474410-t3.as.r.appspot.com";
 const user_email = sessionStorage.getItem("se_current") || localStorage.getItem("se_remember");
 const user_id = sessionStorage.getItem('se_userId') || localStorage.getItem('se_userId');
 
@@ -573,7 +570,7 @@ async function loadMonthDropdown() {
   dropdown.innerHTML = '<option value="">Loading Months...</option>';
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/months`, {
+    const res = await fetch('/api/months', {
       headers: { "Authorization": `Bearer ${token}` }
     });
 
@@ -677,8 +674,8 @@ async function fetchDashboardData(selectedMonth = null) {
     
     try {
         // ⭐️ FIX: Use the single /api/dashboard endpoint for Budget and Expenses
-        const dashboardRes = await fetch(`${API_BASE_URL}/api/dashboard/${user_id}${monthQuery}`, { headers });
-        const savingsRes = await fetch(`${API_BASE_URL}/api/savings`, { headers }); 
+        const dashboardRes = await fetch(`/api/dashboard/${user_id}${monthQuery}`, { headers });
+        const savingsRes = await fetch('/api/savings', { headers });
         
         const dashboardData = await dashboardRes.json();
         const savingData = await savingsRes.json();
@@ -1345,4 +1342,3 @@ function showToastForMonth(monthValue) {
 </script>
 </body>
 </html>
-
