@@ -57,6 +57,11 @@ const logError = (label, error, details = {}) => {
     });
 };
 
+const parseNumericField = (value, fallback = 0) => {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+};
+
 // --- Middleware ---
 app.use(express.json());
 
@@ -479,9 +484,9 @@ app.get('/api/savings', authenticateToken, async (req, res) => {
         const results = await queryAsync(sql, [userId]);
 
         if (results.length > 0) {
-            res.status(200).json({ success: true, ...results[0] });
+            res.status(200).json({ success: true, message: 'Savings data loaded successfully.', ...results[0] });
         } else {
-            res.status(200).json({ success: true, target: 0, months: 1, saved_amount: 0 });
+            res.status(200).json({ success: true, message: 'No savings plan found.', target: 0, months: 1, saved_amount: 0 });
         }
     } catch (error) {
         logError('SAVINGS LOAD ERROR', error, { userId });
@@ -489,50 +494,61 @@ app.get('/api/savings', authenticateToken, async (req, res) => {
     }
 });
 
-// POST Savings Target
-app.post('/api/savings/target', authenticateToken, async (req, res) => {
-    const { target, months } = req.body;
-    const userId = req.user.id;
-    logDebug('SAVINGS TARGET USER', { userId });
-    
+const saveSavingsPlan = async (req, res) => {
+    const user_id = req.body.user_id || req.body.userId || req.user.id;
+    const target = parseNumericField(req.body.target);
+    const months = parseInt(req.body.months, 10);
+    const saved_amount = parseNumericField(req.body.saved_amount ?? req.body.savedAmount, 0);
+    logDebug('SAVINGS SAVE USER', { userId: user_id });
+
+    if (String(req.user.id) !== String(user_id)) return res.status(403).json({ success: false, message: 'Unauthorized attempt to save savings plan.' });
+    if (!target || !months) return res.status(400).json({ success: false, message: 'Invalid savings target or duration.' });
+
     try {
         const sql = `
-            INSERT INTO savings (user_id, target, months)
-            VALUES ($1, $2, $3)
+            INSERT INTO savings (user_id, target, months, saved_amount)
+            VALUES ($1, $2, $3, $4)
             ON CONFLICT (user_id) 
             DO UPDATE SET 
                 target = EXCLUDED.target, 
                 months = EXCLUDED.months,
                 updated_at = NOW();
         `;
-        await queryAsync(sql, [userId, target, months]);
-        const updatedRecord = await queryAsync('SELECT target, months, saved_amount FROM savings WHERE user_id = $1', [userId]);
+        await queryAsync(sql, [user_id, target, months, saved_amount]);
+        const updatedRecord = await queryAsync('SELECT target, months, saved_amount FROM savings WHERE user_id = $1', [user_id]);
         res.status(200).json({ success: true, message: 'Savings goal set successfully!', ...updatedRecord[0] });
     } catch (error) {
-        logError('SAVINGS TARGET ERROR', error, { userId });
+        logError('SAVINGS SAVE ERROR', error, { userId: user_id });
         res.status(500).json({ success: false, message: 'Server error setting savings goal.' });
     }
-});
+};
+
+// POST Savings Target
+app.post('/api/savings/target', authenticateToken, saveSavingsPlan);
+
+// POST Savings Plan alias for Step 3 integrations
+app.post('/api/savings/save', authenticateToken, saveSavingsPlan);
 
 // PATCH Savings Amount
 app.patch('/api/savings/current', authenticateToken, async (req, res) => {
-    const { amount } = req.body; 
-    const userId = req.user.id;
-    logDebug('SAVINGS CURRENT USER', { userId });
+    const user_id = req.body.user_id || req.body.userId || req.user.id;
+    const amount = parseNumericField(req.body.amount ?? req.body.saved_amount ?? req.body.savedAmount);
+    logDebug('SAVINGS CURRENT USER', { userId: user_id });
 
-    if (isNaN(Number(amount)) || Number(amount) === 0) return res.status(400).json({ success: false, message: 'Invalid amount provided.' });
+    if (String(req.user.id) !== String(user_id)) return res.status(403).json({ success: false, message: 'Unauthorized attempt to update savings amount.' });
+    if (!amount) return res.status(400).json({ success: false, message: 'Invalid amount provided.' });
 
     try {
-        const check = await queryAsync('SELECT target FROM savings WHERE user_id = $1', [userId]);
+        const check = await queryAsync('SELECT target FROM savings WHERE user_id = $1', [user_id]);
         if (check.length === 0) return res.status(404).json({ success: false, message: 'Please set your savings target before updating.' });
 
         const sql = 'UPDATE savings SET saved_amount = GREATEST(0, saved_amount + $1), updated_at = NOW() WHERE user_id = $2';
-        await queryAsync(sql, [amount, userId]);
+        await queryAsync(sql, [amount, user_id]);
 
-        const updatedRecord = await queryAsync('SELECT target, months, saved_amount FROM savings WHERE user_id = $1', [userId]);
+        const updatedRecord = await queryAsync('SELECT target, months, saved_amount FROM savings WHERE user_id = $1', [user_id]);
         res.status(200).json({ success: true, message: 'Savings amount updated!', ...updatedRecord[0] });
     } catch (error) {
-        logError('SAVINGS CURRENT ERROR', error, { userId });
+        logError('SAVINGS CURRENT ERROR', error, { userId: user_id });
         res.status(500).json({ success: false, message: 'Server error updating saved amount.' });
     }
 });

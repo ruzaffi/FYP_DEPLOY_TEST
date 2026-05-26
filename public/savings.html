@@ -429,18 +429,19 @@ function getUserId() {
     
     // Function to calculate and save the target
     window.calcSavings = async function() {
-        const target = Number(document.getElementById('target').value || 0);
-        const months = Number(document.getElementById('months').value || 0);
+        const target = parseFloat(document.getElementById('target').value || 0);
+        const months = parseInt(document.getElementById('months').value || 0, 10);
+        const saved_amount = 0;
 
         if (!target || !months) {
             showToast('Please fill in both fields before continuing.', 'error');
             return;
         }
 
-        const data = { target, months };
+        const data = { user_id: userId, target, months, saved_amount };
         
         try {
-            const res = await fetch('/api/savings/target', {
+            const res = await fetch('/api/savings/save', {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -451,7 +452,7 @@ function getUserId() {
 
             if (res.ok) {
                 const result = await res.json();
-                showToast(`Savings goal of RM ${result.target.toFixed(2)} over ${result.months} months set successfully!`, 'success');
+                showToast(`Savings goal of RM ${Number(result.target).toFixed(2)} over ${result.months} months set successfully!`, 'success');
             } else {
                 const errorData = await res.json();
                 showToast(errorData.message || 'Failed to set target. Please try again.', 'error');
@@ -465,14 +466,14 @@ function getUserId() {
 
     // Function to update saved amount
     window.updateSavings = async function() {
-        let add = Number(document.getElementById('addSave').value || 0);
+        let add = parseFloat(document.getElementById('addSave').value || 0);
 
         if (add === 0) {
             showToast('Please enter an amount to add or deduct.', 'error');
             return;
         }
 
-        const data = { amount: add };
+        const data = { user_id: userId, amount: add };
         
         try {
             // PATCH request to update the saved amount
