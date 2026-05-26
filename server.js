@@ -14,7 +14,7 @@ const port = process.env.PORT || 8080;
 // --- CONFIGURATION ---
 const JWT_SECRET = process.env.JWT_SECRET || 'YOUR_VERY_SECURE_SECRET_KEY';
 const HASH_SALT_ROUNDS = 10;
-const BASE_URL = process.env.BASE_URL || 'https://gentle-dominion-474410-t3.as.r.appspot.com';
+const BASE_URL = process.env.BASE_URL || 'https://fyp-smartexpense-backend.onrender.com';
 const TOKEN_EXPIRY_MINUTES = 30;
 
 // --- Middleware ---
