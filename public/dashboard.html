@@ -3,12 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dashboard — SmartExpense AI</title>
+<title>Dashboard - SmartExpense AI</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 
   :root{
+    --sidebar-bg: #2C3E50;
+    --sidebar-hover-bg: #3E5266;
+    --sidebar-active-bg: #34495E;
+    --sidebar-border: #4A637F;
+    --sidebar-text: #ECF0F1;
+    --sidebar-accent: #9EC3B5;
     --text-danger: #E74C3C; 
   }
 
@@ -32,18 +38,18 @@ body.dashboard-layout { display: flex; }
 /* --- DARK SIDEBAR STYLES --- */
 .sidebar {
     width: 250px; height: 100vh; position: fixed; top: 0; left: 0; padding-top: 30px; 
-    background: #2C3E50; /* Deep Charcoal/Blue background */
+    background: var(--sidebar-bg); /* Deep Charcoal/Blue background */
     box-shadow: 2px 0 10px rgba(0,0,0,0.3); /* Darker shadow */
     z-index: 100;
 }
 .logo-sidebar { 
-    font-size: 20px; font-weight: bold; color: #ECF0F1; /* Light text for contrast */
+    font-size: 20px; font-weight: bold; color: var(--sidebar-text); /* Light text for contrast */
     display: block; 
-    margin: 0 20px 30px 20px; border-bottom: 1px solid #4A637F; /* Darker border */
+    margin: 0 20px 30px 20px; border-bottom: 1px solid var(--sidebar-border); /* Darker border */
     padding-bottom: 20px; 
 }
 .sidebar a {
-    display: flex; align-items: center; color: #ECF0F1; /* Light text for links */
+    display: flex; align-items: center; color: var(--sidebar-text); /* Light text for links */
     padding: 15px 20px; text-decoration: none; 
     font-size: 16px; border-left: 4px solid transparent; transition: all 0.3s;
 }
@@ -52,19 +58,23 @@ body.dashboard-layout { display: flex; }
 }
 /* Dark hover and active states for better contrast */
 .sidebar a:hover { 
-    background: #3E5266; 
-    border-left: 4px solid #9EC3B5; 
+    background: var(--sidebar-hover-bg);
+    border-left: 4px solid var(--sidebar-accent);
+    color: var(--sidebar-text);
+}
+.sidebar a:hover i {
+    color: var(--sidebar-accent);
 }
 .sidebar a.active { 
-    background: #34495E; 
+    background: var(--sidebar-active-bg);
     font-weight: bold; 
-    border-left: 4px solid #9EC3B5; 
+    border-left: 4px solid var(--sidebar-accent);
 }
 .sidebar a.active i { 
-    color: #9EC3B5; 
+    color: var(--sidebar-accent);
 }
 .sidebar hr { 
-    border-color: #4A637F; /* Darker divider */
+    border-color: var(--sidebar-border); /* Darker divider */
     margin: 20px; 
 }
 /* --- END DARK SIDEBAR STYLES --- */
@@ -117,14 +127,16 @@ body.dashboard-layout { display: flex; }
 }
 
 /* FIX: The background and border that creates the highlight */
+#aiAdvisorCard,
 .ai-advisor-card { 
-    background: #FFFBCC !important; /* brighter yellow */
-    border: 1px solid #FFC300; 
-    box-shadow: 0 4px 15px rgba(255, 195, 0, 0.5); 
-    padding: 20px; 
-    border-radius: 9px; 
+    background: #FFE7B3 !important;
+    border: 1px solid #FFD479 !important;
+    box-shadow: 0 4px 15px rgba(255, 192, 70, 0.22) !important;
+    padding: 30px !important;
+    border-radius: 12px !important;
 }
 
+#aiAdvisorCard p,
 .ai-advisor-card p { color: #4E5E6C; font-size: 16px; }
 
 /* --- TOOLTIP FIX (Replace or update the existing rules) --- */
@@ -230,11 +242,11 @@ footer { text-align: center; padding: 30px 0; background: #E8E5E2; color: #74849
     .sidebar { width: 70px; padding-top: 10px; }
     .content { margin-left: 70px; padding: 20px 0; }
 .logo-sidebar { 
-    font-size: 20px; font-weight: bold; color: #ECF0F1;
+    font-size: 20px; font-weight: bold; color: var(--sidebar-text);
     display: flex; /* CHANGE: Use flex to align image and text horizontally */
     align-items: center; /* NEW: Vertically center the image and text */
     margin: 0 20px 30px 20px; 
-    border-bottom: 1px solid #4A637F;
+    border-bottom: 1px solid var(--sidebar-border);
     padding-bottom: 20px; 
 }
     .sidebar a { justify-content: center; padding: 12px 0; }
@@ -270,13 +282,13 @@ footer { text-align: center; padding: 30px 0; background: #E8E5E2; color: #74849
     background: var(--sidebar-active-bg);
     color: #fff;
     border-left: 4px solid var(--text-danger);
-    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8); /* glowing red text */
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8), 0 0 14px rgba(231, 76, 60, 0.45);
     font-weight: bold;
 }
 
 .sidebar a.logout-link:hover i {
     color: #fff;
-    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8); /* glowing red icon */
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8), 0 0 14px rgba(231, 76, 60, 0.45);
 }
 
 .total-card {
@@ -287,19 +299,6 @@ footer { text-align: center; padding: 30px 0; background: #E8E5E2; color: #74849
     from { width: 0; }
     to { width: 100%; }
 }
-
-.ai-advisor-card { 
-    background: #FFE7B3 !important; 
-    border: 1px solid #FFD479; 
-    box-shadow: 0 4px 15px rgba(255, 192, 70, 0.2); 
-    padding: 30px; 
-    border-radius: 12px; 
-}
-.ai-advisor-card p { 
-    color: #4E5E6C; 
-    font-size: 16px;
-}
-
 
 .robot-head {
     font-size:36px;
@@ -435,15 +434,14 @@ h2#dashboardTitle {
     </div>
     
 
-<div class="content">    
-    <div class="main-container" style="max-width: 1200px; padding-bottom: 80px;">
+<div class="content"> <div class="main-container" style="max-width: 1200px; padding-bottom: 80px;">
 
        
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; width: 100%;">
 
     <!-- Left side: Dashboard + Welcome -->
     <div style="display:flex; align-items: baseline; gap: 10px;"> 
-        <h1 id="dashboardTitle" style="margin: 0; font-size: 28px;">Dashboard <small style="font-weight:400; color:#748492;">—</small></h1>
+        <h1 id="dashboardTitle" style="margin: 0; font-size: 28px;">Dashboard <small style="font-weight:400; color:#748492;">-</small></h1>
         <span id="welcomeMessage" style="font-size: 16px; color: #4E5E6C; font-weight: 500;"></span>
     </div>
 
@@ -455,7 +453,7 @@ h2#dashboardTitle {
             <i class="fa-solid fa-circle-info"></i>
         </span>
         <span style="font-size: 15px; color: #748492; font-weight: 500;">Viewing:</span>
-        <select id="monthDropdown" onchange="handleMonthChange(this)" style="padding: 4px 8px; font-size: 14px;">
+        <select id="monthDropdown" style="padding: 4px 8px; font-size: 14px;">
             <option value="">Loading...</option>
         </select>
     </div>
@@ -509,7 +507,7 @@ h2#dashboardTitle {
                 </div>
             </div>
 
-            <div id="aiAdvisorCard" class="card" style="min-width:0; background:#FFE680; border-radius:12px; padding:18px; box-shadow:0 3px 8px rgba(255,193,7,0.4); position:relative;">
+            <div id="aiAdvisorCard" class="card ai-advisor-card" style="min-width:0; position:relative;">
                 <div style="display:flex;align-items:flex-start;gap:12px;">
                     <div class="robot-container" style="position:relative;">
                         <i class="fa-solid fa-robot robot-head" style="font-size:30px;color:#2E86C1;"></i>
@@ -544,14 +542,14 @@ h2#dashboardTitle {
                 </p>
             </div>
             <div class="export-buttons-container">
-                <button class="export-btn" onclick="exportTableToCSV('txTable', 'SmartExpense_Transactions.csv')">📄 Export CSV</button>
+                <button class="export-btn" onclick="exportTableToCSV('txTable', 'SmartExpense_Transactions.csv')">Export CSV</button>
             </div>
         </div>
 
-    </div> </div> ```
+    </div> </div>
  <div id="toast"
      style="position: fixed; bottom: 30px; right: 30px;
-            background: var(--accent-sage); color: var(--text-primary);
+            background: #6CA08D; color: #fff;
             padding: 12px 20px; border-radius: 16px;
             font-size: 14px; font-weight: 500;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -574,76 +572,68 @@ if (!user_email || !user_id) {
     location.href = "register.html";
 }
 
-// --- Corrected loadMonthDropdown Function ---
 async function loadMonthDropdown() {
-  const token = getToken();
-  if (!token) return;
+    const token = getToken();
+    const dropdown = document.getElementById('monthDropdown');
+    if (!dropdown) return null;
 
-  const dropdown = document.getElementById('monthDropdown');
-  dropdown.innerHTML = '<option value="">Loading Months...</option>';
-
-  try {
-    const res = await fetch('/api/months', {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (!res.ok) {
-        console.error('Server returned an error when fetching months:', res.status);
-        dropdown.innerHTML = '<option value="">Error Loading Months</option>';
-        return; 
-    }
-
-    const months = await res.json();
-    const monthList = Array.isArray(months)
-      ? months
-      : (months && months.months) || (months ? [months] : []);
-
-    dropdown.innerHTML = "";
-    
-    // Create an option for the current month if it's not in the list, 
-    // or just use the first month as the default selection.
-    let defaultMonth = monthList.length > 0 ? monthList[0].month_year : new Date().toISOString().slice(0, 7);
-
-
-    if (monthList.length === 0) {
-      const opt = document.createElement('option');
-      opt.textContent = "No data available";
-      dropdown.appendChild(opt);
-      return;
-    }
-
-    monthList.forEach(m => {
-      const opt = document.createElement('option');
-      const monthValue = m.month_year || m; 
-      
-      opt.value = monthValue;
-      // ⭐ THE FIX: Display the month string directly
-      opt.textContent = monthValue; 
-      
-      // Set the first available month as selected by default
-      if (monthValue === defaultMonth) {
-          opt.selected = true;
-      }
-
-      dropdown.appendChild(opt);
-    });
-    
-    // Trigger data load for the default (latest) month right after populating the list
-    if (defaultMonth) {
-        fetchDashboardData(defaultMonth);
+    dropdown.innerHTML = '<option value="">Loading Months...</option>';
+    if (!token) {
+        dropdown.innerHTML = '<option value="">Login Required</option>';
+        return null;
     }
-  } catch (err) {
-    console.error('Error loading month dropdown:', err);
-    dropdown.innerHTML = '<option value="">Network Error</option>';
-  }
-}
 
-const dropdown = document.getElementById("monthDropdown");
-if (dropdown) {
-  dropdown.addEventListener("change", async () => {
-    await fetchDashboardData(dropdown.value);
-    showToastForMonth(dropdown.value);
-  });
+    try {
+        const res = await fetch('/api/months', {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            console.error('Server returned an error when fetching months:', res.status);
+            dropdown.innerHTML = '<option value="">Error Loading Months</option>';
+            return null;
+        }
+
+        const months = await res.json();
+        const monthList = (Array.isArray(months) ? months : (months && months.months) || [])
+            .map(m => typeof m === 'string' ? m : (m.month_year || m.month || m.value))
+            .filter(Boolean);
+
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const urlMonth = new URLSearchParams(window.location.search).get("month");
+        const defaultMonth = urlMonth || monthList[0] || currentMonth;
+
+        dropdown.innerHTML = "";
+        if (monthList.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = currentMonth;
+            opt.textContent = currentMonth;
+            dropdown.appendChild(opt);
+            dropdown.value = currentMonth;
+            return currentMonth;
+        }
+
+        monthList.forEach(monthValue => {
+            const opt = document.createElement('option');
+            opt.value = monthValue;
+            opt.textContent = monthValue;
+            dropdown.appendChild(opt);
+        });
+
+        if (!monthList.includes(defaultMonth)) {
+            const opt = document.createElement('option');
+            opt.value = defaultMonth;
+            opt.textContent = defaultMonth;
+            dropdown.prepend(opt);
+        }
+
+        dropdown.value = defaultMonth;
+        return defaultMonth;
+    } catch (err) {
+        console.error('Error loading month dropdown:', err);
+        dropdown.innerHTML = '<option value="">Network Error</option>';
+        return null;
+    }
 }
 
 // Global scope for Chart.js instance (Explicitly attach to window)
@@ -659,7 +649,7 @@ const CHART_COLORS = [
     '#E67E22', // Carrot
     '#2ECC71', // Green Sea
     '#95A5A6', // Concrete
-    '#C0392B'  // Pomegranate (Red for warnings)
+    '#C0392B' // Pomegranate (Red for warnings)
 ]; 
 const LIGHT_TEXT = '#4E5E6C';
 const BLUE_ACCENT = '#3498DB'; 
@@ -708,7 +698,7 @@ async function fetchDashboardData(selectedMonth = null) {
     const monthQuery = selectedMonth ? `?month=${selectedMonth}` : '';
     
     try {
-        // ⭐️ FIX: Use the single /api/dashboard endpoint for Budget and Expenses
+        // Use the single /api/dashboard endpoint for Budget and Expenses
         const dashboardRes = await fetch(`/api/dashboard/${user_id}${monthQuery}`, { headers });
         const budgetRes = await fetch(`/api/budget/get?user_id=${encodeURIComponent(user_id)}`, { headers });
         const savingsRes = await fetch('/api/savings', { headers });
@@ -758,7 +748,7 @@ if (dashboardData.success && dashboardData.expenses) {
         console.error('Failed to fetch dashboard data:', err);
         document.querySelector('.content').innerHTML = `
             <div style="padding:40px;text-align:center;color:#C0392B;">
-                ⚠️ Unable to load dashboard data. Please check your internet connection or try again later.
+                Unable to load dashboard data. Please check your internet connection or try again later.
             </div>`; 
     }
     
@@ -767,36 +757,16 @@ if (dashboardData.success && dashboardData.expenses) {
 }
 
 
-// Update the DOMContentLoaded block to:
-// dashboard.html (JavaScript section - Replace the existing block)
-
-    // dashboard.html (JavaScript section - **REPLACE** the existing DOMContentLoaded block with this one)
-
 document.addEventListener("DOMContentLoaded", async () => {
-  // ⭐ Show welcome message once
-  displayWelcomeMessage();
+    displayWelcomeMessage();
 
-  // 🗓 Load dropdown only once
-  await loadMonthDropdown();
+    const initialMonth = await loadMonthDropdown();
+    await fetchDashboardData(initialMonth);
 
-  // 📅 Check if month in URL (e.g., ?month=2025-11)
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialMonth = urlParams.get("month");
-
-  // 🧠 Fetch data for the correct month
-  await fetchDashboardData(initialMonth);
-
-  // 🧩 Update dropdown to match selected month (if present)
-  const dropdown = document.getElementById("monthDropdown");
-  if (dropdown) {
-    dropdown.value = initialMonth || dropdown.value;
-
-    // 🪄 Add listener for month change + toast notification
-    dropdown.addEventListener("change", async () => {
-      await fetchDashboardData(dropdown.value);
-      showToast(`📊 Updated to ${dropdown.value}`);
-    });
-  }
+    const dropdown = document.getElementById("monthDropdown");
+    if (dropdown) {
+        dropdown.addEventListener("change", () => handleMonthChange(dropdown));
+    }
 });
 
 /**
@@ -805,8 +775,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 function mainRender() {
     // Get data from local storage (now guaranteed to be the latest synced data)
 const setup = normalizeBudget(JSON.parse(localStorage.getItem('se_setup_' + user_email) || 'null'));
-    const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user_email) || '[]');
-    const savingsGoal = normalizeSavings(JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null'));
+const expenses = JSON.parse(localStorage.getItem('se_expenses_' + user_email) || '[]');
+const savingsGoal = normalizeSavings(JSON.parse(localStorage.getItem('se_savings_' + user_email) || 'null'));
 
     // --- Check if Setup is complete (CRITICAL CHECK) ---
     if (!setup || !setup.income) { 
@@ -827,7 +797,7 @@ const income = setup.income;
 const balance = income - totalFixed - totalDailySpending;
 const totalSpent = totalFixed + totalDailySpending;
 
-// 🟢 FIX: Retrieve the loaded month and calculate dates based on it.
+// Retrieve the loaded month and calculate dates based on it.
 const loadedMonthYear = localStorage.getItem('se_current_month_' + user_email) || new Date().toISOString().slice(0, 7);
 const [year, month] = loadedMonthYear.split('-').map(Number);
 
@@ -885,7 +855,7 @@ if (trackerBox) trackerBox.innerHTML = "";
         const totalVariable = expenses.filter(e => e.category !== 'Savings').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
         
         let trackerMsg = "";
-        // 🔴 Overspending
+        // Overspending
         if (currentDailyAvgSpent > averageDailyBudget) {
             trackerMsg = `
                 <div style="display:flex;align-items:center;gap:8px;color:#E74C3C;font-weight:bold;font-size:18px;">
@@ -898,14 +868,14 @@ if (trackerBox) trackerBox.innerHTML = "";
                 </div>
             `;
         } 
-        // 🟢 On Track
+        // On Track
         else {
             const potentialSavings = (averageDailyBudget - currentDailyAvgSpent) * daysLeft;
             trackerMsg = `
                 <div style="display:flex;align-items:center;gap:8px;color:#27AE60;font-weight:bold;font-size:18px;">
                     <i class="fa-solid fa-circle-check"></i> On Track
                 </div>
-                <div style="margin-top:5px;">You’re spending <b>RM ${currentDailyAvgSpent.toFixed(2)}</b>/day, within your daily limit (<b>RM ${averageDailyBudget.toFixed(2)}</b>).</div>
+                <div style="margin-top:5px;">You're spending <b>RM ${currentDailyAvgSpent.toFixed(2)}</b>/day, within your daily limit (<b>RM ${averageDailyBudget.toFixed(2)}</b>).</div>
                 <div style="margin-top:5px;">If you maintain this pace, you could save <b>RM ${potentialSavings.toFixed(2)}</b> this month!</div>
                 <div style="margin-top:10px;color:#117864;">
                     <i class="fa-solid fa-chart-pie"></i> <b>Fixed:</b> RM ${totalFixed.toFixed(2)} | <b>Other Expenses:</b> RM ${totalVariable.toFixed(2)}
@@ -941,7 +911,7 @@ if (trackerBox) trackerBox.innerHTML = "";
             tr.innerHTML = `
                 <td style="padding: 10px;">${r.category}</td>
                 <td style="padding: 10px; font-weight: bold;">RM ${Number(r.amount).toFixed(2)}</td>
-                <td style="padding: 10px; color: #748492;">${r.date} ${r.description ? '— ' + r.description : ''}</td>`;
+                <td style="padding: 10px; color: #748492;">${r.date} ${r.description ? '- ' + r.description : ''}</td>`;
             txTable.appendChild(tr);
         });
     }
@@ -1063,6 +1033,11 @@ function renderSavingsProgress(savingsGoal, expenses) {
         <div style="font-size: 0.9em; margin-top: 5px;">Time Goal: ${months} Months.</div>
     `;
 
+    renderSavingsChart(chartSaved, remaining, target);
+}
+
+function renderSavingsChart(chartSaved, remaining, target) {
+    const savingsCanvas = document.getElementById('savingsChart');
     if (window.savingsChartInstance) {
         window.savingsChartInstance.destroy();
         window.savingsChartInstance = null;
@@ -1095,133 +1070,98 @@ function renderSavingsProgress(savingsGoal, expenses) {
         }
     });
 }
-function renderAIAdvisor(setup, expenses, savingsData) {
+async function renderAIAdvisor(setup, expenses, savingsData) {
     const aiText = document.getElementById('aiText');
     if (!aiText) return;
-    aiText.innerHTML = ""; // reset container
 
-    const suggestions = [];
-
-    // 🌟 Helper for styled message boxes
-    const msg = (icon, text, color, bg) => `
-        <div style="
-            background:${bg};
-            color:${color};
-            padding:10px 14px;
-            margin:6px 0;
-            border-radius:10px;
-            font-weight:500;
-            line-height:1.5;
-            box-shadow:0 1px 3px rgba(0,0,0,0.1);
-            display:flex;
-            align-items:flex-start;
-            gap:10px;
-        ">
-            <i class="fa-solid ${icon}" style="margin-top:3px;font-size:18px;"></i>
-            <div>${text}</div>
-        </div>`;
-
-    // ✅ If user hasn't done setup
     if (!setup || !setup.income) {
-        suggestions.push(msg("fa-circle-exclamation",
-            'Please complete your <b>Budget Setup (Step 1)</b> to get AI analysis.',
-            '#333', '#FFE9C4'));
-        return showTypingEffect(aiText, suggestions);
+        return typeWriterEffect(aiText, 'Please complete your Budget Setup (Step 1) to get AI analysis.');
     }
 
-    // 🧮 Data
     const income = Number(setup.income);
     const rent = Number(setup.rent || 0);
     const food = Number(setup.food || 0);
     const internet = Number(setup.internet || 0);
     const others = Number(setup.others || 0);
-
     const totalFixed = rent + food + internet + others;
-    const totalExpenses = expenses.filter(e => e.category !== 'Savings').reduce((sum, e) => sum + Number(e.amount), 0);
-    const totalSavingsRecorded = expenses.filter(e => e.category === 'Savings').reduce((sum, e) => sum + Number(e.amount), 0);
-    const grandTotal = totalFixed + totalExpenses + totalSavingsRecorded;
-    const usedPercent = (grandTotal / income) * 100;
-    const remaining = income - grandTotal;
 
-    // 💸 Expense overview
-    suggestions.push(msg(
-        "fa-wallet",
-        `<b>Total Used:</b> RM ${grandTotal.toFixed(2)} / RM ${income.toFixed(2)} 
-        <br><span style="font-size:0.9em;">(${usedPercent.toFixed(1)}% of your total budget)</span>`,
-        '#145A32', '#D5F5E3'
-    ));
+    const dailyExpenses = expenses
+        .filter(e => e.category !== 'Savings')
+        .reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const totalSpent = totalFixed + dailyExpenses;
+    const balance = income - totalSpent;
+    const payload = {
+        income,
+        fixedExpenses: {
+            rent,
+            food,
+            internet,
+            others,
+            total: totalFixed
+        },
+        dailyExpenses,
+        totalSpent,
+        balance,
+        savingsGoal: savingsData || null
+    };
 
-    // 💼 Breakdown
-    suggestions.push(`
-        <div style="background:#EBF5FB; color:#1B4F72; padding:10px 14px; border-radius:10px; margin-top:4px;">
-            <i class="fa-solid fa-house"></i> <b>Fixed Expenses Breakdown</b><br>
-            • Rent: RM ${rent.toFixed(2)}<br>
-            • Food Budget: RM ${food.toFixed(2)}<br>
-            • Internet: RM ${internet.toFixed(2)}<br>
-            • Others: RM ${others.toFixed(2)}<br>
-            <b>Total Fixed:</b> RM ${totalFixed.toFixed(2)}
-        </div>
-    `);
+    typeWriterEffect(aiText, 'Analyzing your latest budget data...');
 
-    // 💬 Budget advice
-    if (usedPercent >= 100)
-        suggestions.push(msg("fa-triangle-exclamation",
-            `<b>Over budget!</b> You’ve spent ${usedPercent.toFixed(1)}%. Cut back immediately.`,
-            '#7B241C', '#F5B7B1'));
-    else if (usedPercent >= 90)
-        suggestions.push(msg("fa-circle-exclamation",
-            `Be careful! You’ve used ${usedPercent.toFixed(1)}%. Only RM ${remaining.toFixed(2)} left.`,
-            '#784212', '#FAD7A0'));
-    else if (usedPercent >= 70)
-        suggestions.push(msg("fa-lightbulb",
-            `You’ve spent ${usedPercent.toFixed(1)}%. Try reducing variable expenses.`,
-            '#7D6608', '#FCF3CF'));
-    else if (usedPercent >= 50)
-        suggestions.push(msg("fa-circle-check",
-            `Good job! You’ve used ${usedPercent.toFixed(1)}%. Keep maintaining this balance.`,
-            '#0B5345', '#D1F2EB'));
-    else
-        suggestions.push(msg("fa-leaf",
-            `Excellent control! Only ${usedPercent.toFixed(1)}% spent — RM ${remaining.toFixed(2)} left.`,
-            '#186A3B', '#D4EFDF'));
-
-    // 💰 Savings section
-    const target = savingsData ? savingsData.target : 0;
-    const saved = savingsData ? savingsData.saved_amount : 0;
-
-    if (!savingsData || !target) {
-        suggestions.push(msg("fa-piggy-bank",
-            `No savings goal found. Please set one in <b>Step 3: Savings Plan</b>.`,
-            '#333', '#FFF3CD'));
-    } else {
-        const p = (saved / target) * 100;
-        const col = p >= 90 ? '#186A3B' : p >= 60 ? '#7D6608' : '#943126';
-        const bg  = p >= 90 ? '#D4EFDF' : p >= 60 ? '#FEF5E7' : '#FADBD8';
-
-        let icon = "fa-chart-line";
-        if (p >= 100) icon = "fa-trophy";
-        else if (p >= 90) icon = "fa-star";
-        else if (p >= 70) icon = "fa-bolt";
-        else if (p >= 50) icon = "fa-circle-half-stroke";
-        else if (p >= 30) icon = "fa-chart-simple";
-
-        let text;
-        if (p >= 100) text = `<b>Congratulations!</b> You’ve reached your goal of RM ${target.toFixed(2)}!`;
-        else if (p >= 90) text = `${p.toFixed(1)}% achieved — almost there!`;
-        else if (p >= 70) text = `${p.toFixed(1)}% — past the tough part!`;
-        else if (p >= 50) text = `Halfway mark reached — RM ${saved.toFixed(2)} saved!`;
-        else text = `Only ${p.toFixed(1)}% saved. Add more regularly to grow your savings.`;
-
-        suggestions.push(msg(icon, text, col, bg));
+    try {
+        const advice = await triggerAIAdvisor(payload);
+        typeWriterEffect(aiText, advice);
+    } catch (err) {
+        console.error('AI Advisor request failed:', err);
+        typeWriterEffect(aiText, buildLocalAIAdvice(payload));
     }
-
-    showTypingEffect(aiText, suggestions);
 }
 
-// ✅ Clean typing effect (self-contained, safe)
-// ✅ Safe typing effect: no duplicates, handles rapid calls
-function showTypingEffect(container, messages, typingSpeed = 15, delayBetween = 700) {
-    // Stop any ongoing typing
+async function triggerAIAdvisor({ income, fixedExpenses, dailyExpenses, totalSpent, balance, savingsGoal }) {
+    const token = getToken();
+    const res = await fetch('/api/ai-advisor', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+            income,
+            fixedExpenses,
+            dailyExpenses,
+            totalSpent,
+            balance,
+            savingsGoal
+        })
+    });
+
+    if (!res.ok) {
+        throw new Error(`AI Advisor request failed with status ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data.advice || data.response || data.message || data.text || 'AI Advisor did not return any advice.';
+}
+
+function buildLocalAIAdvice({ income, fixedExpenses, dailyExpenses, totalSpent, balance, savingsGoal }) {
+    const usedPercent = income > 0 ? (totalSpent / income) * 100 : 0;
+    const savingsTarget = Number(savingsGoal?.target || 0);
+    const savedAmount = Number(savingsGoal?.saved_amount || 0);
+    const savingsLine = savingsTarget > 0
+        ? ` Savings progress: RM ${savedAmount.toFixed(2)} of RM ${savingsTarget.toFixed(2)}.`
+        : ' No savings goal has been set yet.';
+
+    if (balance < 0) {
+        return `You are over budget by RM ${Math.abs(balance).toFixed(2)}. Fixed expenses are RM ${fixedExpenses.total.toFixed(2)} and daily expenses are RM ${dailyExpenses.toFixed(2)}. Reduce flexible spending first and review non-essential fixed costs.${savingsLine}`;
+    }
+
+    if (usedPercent >= 85) {
+        return `You have used ${usedPercent.toFixed(1)}% of your income, with RM ${balance.toFixed(2)} remaining. Keep daily expenses controlled for the rest of the month and avoid new commitments.${savingsLine}`;
+    }
+
+    return `Your spending is currently manageable. Total spent is RM ${totalSpent.toFixed(2)}, leaving RM ${balance.toFixed(2)} from RM ${income.toFixed(2)} income. Continue tracking daily expenses and consider moving part of the balance toward savings.${savingsLine}`;
+}
+
+function typeWriterEffect(container, text, typingSpeed = 18) {
     if (container._typingInterval) {
         clearInterval(container._typingInterval);
         container._typingInterval = null;
@@ -1231,40 +1171,29 @@ function showTypingEffect(container, messages, typingSpeed = 15, delayBetween = 
         container._nextTimeout = null;
     }
 
-    container.innerHTML = ""; // clear container
-    let msgIndex = 0;
+    container.textContent = "";
+    const safeText = String(text || '');
+    let charIndex = 0;
 
-    function typeMessage(msg, callback) {
-        const box = document.createElement("div");
-        container.appendChild(box);
-        let charIndex = 0;
+    container._typingInterval = setInterval(() => {
+        container.textContent = safeText.slice(0, charIndex + 1);
+        charIndex++;
 
-        container._typingInterval = setInterval(() => {
-            box.innerHTML = msg.slice(0, charIndex + 1);
-            charIndex++;
-            if (charIndex > msg.length) {
-                clearInterval(container._typingInterval);
-                container._typingInterval = null;
-                container._nextTimeout = setTimeout(callback, delayBetween);
-            }
-        }, typingSpeed);
-    }
-
-    function next() {
-        if (msgIndex < messages.length) {
-            typeMessage(messages[msgIndex], () => {
-                msgIndex++;
-                next();
-            });
+        if (charIndex >= safeText.length) {
+            clearInterval(container._typingInterval);
+            container._typingInterval = null;
         }
-    }
+    }, typingSpeed);
+}
 
-    next();
+function showTypingEffect(container, messages, typingSpeed = 15, delayBetween = 700) {
+    const plainText = Array.isArray(messages) ? messages.join('\n\n') : String(messages || '');
+    typeWriterEffect(container, plainText, typingSpeed);
 }
 
 // dashboard.html 
 
-function handleMonthChange(selectElement) {
+async function handleMonthChange(selectElement) {
     const selectedMonth = selectElement.value;
     
     // Only fetch if a valid month is selected (i.e., not the initial "Loading...")
@@ -1275,7 +1204,8 @@ function handleMonthChange(selectElement) {
     history.pushState(null, '', newBrowserUrl);
 
     // 2. Fetch the data for the new month
-    fetchDashboardData(selectedMonth); 
+    await fetchDashboardData(selectedMonth);
+    showToastForMonth(selectedMonth);
 }
 // --- EXPORT FUNCTIONALITY ---
 
@@ -1344,12 +1274,12 @@ window.exportTableToCSV = function(tableId, filename) {
     downloadLink.click();
     document.body.removeChild(downloadLink);
     const note = document.createElement('div');
-    note.textContent = "✅ Transactions exported successfully!";
+    note.textContent = "Transactions exported successfully!";
     note.style = "position:fixed;bottom:20px;right:20px;background:#2ECC71;color:#fff;padding:10px 16px;border-radius:8px;box-shadow:0 3px 6px rgba(0,0,0,0.2);";
     document.body.appendChild(note);
     setTimeout(()=>note.remove(), 3000);
 }
-// 🌿 Create toast container once (only one)
+// Create toast container once (only one)
 const toastContainer = document.createElement('div');
 toastContainer.id = 'toastContainer';
 toastContainer.style.position = 'fixed';
@@ -1358,7 +1288,7 @@ toastContainer.style.right = '20px';
 toastContainer.style.zIndex = '9999';
 document.body.appendChild(toastContainer);
 
-// 🌿 Function to show toast
+// Function to show toast
 function showToastForMonth(monthValue) {
     const [year, month] = monthValue.split("-");
     const date = new Date(`${year}-${month}-01`);
