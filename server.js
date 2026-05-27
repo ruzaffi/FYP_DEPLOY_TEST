@@ -71,8 +71,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const allowedOrigins = [
   'http://127.0.0.1:5500',
   'http://localhost:5500',
-  'https://smartexpenseai.site',
-  'https://www.smartexpenseai.site',
+  'https://smartexpenseai.online',
+  'https://www.smartexpenseai.online',
   'https://fyp-smartexpense-backend.onrender.com' // 🚀 Ditambah supaya tak kena block dengan server sendiri!
 ];
 
