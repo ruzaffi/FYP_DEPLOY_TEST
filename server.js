@@ -1,5 +1,3 @@
-// server.js - SmartExpense Backend API (PostgreSQL Migrated Version with Static Asset Support)
-
 const express = require('express');
 const { Pool } = require('pg'); // 🔄 Swapped mysql for pg
 const bcrypt = require('bcrypt');
@@ -7,7 +5,9 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const path = require('path'); // 🚀 Added path module for static file directory routing
+const { GoogleGenAI } = require('@google/genai');
 
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -165,10 +165,60 @@ const verifyDatabaseSchema = async () => {
 };
 
 // --- Frontend Default Entry Route ---
-
 // 🚀 Redirect root domain request directly to your login interface
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// --- JWT Authentication Middleware ---
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; 
+    
+    if (token == null) return res.status(401).json({ success: false, message: 'Access Denied: No token provided.' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ success: false, message: 'Access Denied: Invalid or expired token.' });
+        req.user = user; 
+        logDebug('AUTHENTICATED USER', { userId: req.user.id });
+        next();
+    });
+};
+
+// =========================================================================
+// 🤖 ENDPOINT LIVE GEMINI AI ADVISOR
+// =========================================================================
+app.post('/api/ai/advisor', authenticateToken, async (req, res) => {
+    const { prompt, currentBudget, totalExpenses } = req.body;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: `
+                Kamu adalah Smart AI Advisor untuk aplikasi pengurusan kewangan bernama 'SmartExpense AI'.
+                Tugas kamu adalah memberikan analisis bajet dan nasihat kewangan yang ringkas, padat, tegas, tetapi bermotivasi dalam Bahasa Melayu.
+                
+                Gunakan emoji yang bersesuaian. Berikan maklum balas dalam 3 ke 4 ayat sahaja supaya muat dalam speech bubble dashboard.
+                
+                Data Kewangan Sebenar Pengguna Bulan Ini:
+                - Pendapatan (Income): RM ${currentBudget?.income || 0}
+                - Perbelanjaan Tetap (Sewa/Makan/Internet/Lain): RM ${(Number(currentBudget?.rent || 0) + Number(currentBudget?.food || 0) + Number(currentBudget?.internet || 0) + Number(currentBudget?.others || 0)).toFixed(2)}
+                - Total Semua Perbelanjaan (Fixed + Daily): RM ${totalExpenses || 0}
+                - Baki Bersih Semasa: RM ${(Number(currentBudget?.income || 0) - Number(totalExpenses || 0)).toFixed(2)}
+                
+                Sila berikan maklum balas berdasarkan fokus permintaan ini: ${prompt}
+            `,
+        });
+
+        res.status(200).json({ 
+            success: true, 
+            advice: response.text 
+        });
+
+    } catch (error) {
+        logError('GEMINI AI ERROR', error);
+        res.status(500).json({ success: false, message: 'AI sedang sibuk, sila cuba lagi sebentar.' });
+    }
 });
 
 // --- API Endpoints ---
@@ -290,22 +340,7 @@ app.post('/api/reset_password', async (req, res) => {
     }
 });
 
-// --- JWT Authentication Middleware
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
-    
-    if (token == null) return res.status(401).json({ success: false, message: 'Access Denied: No token provided.' });
-
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ success: false, message: 'Access Denied: Invalid or expired token.' });
-        req.user = user; 
-        logDebug('AUTHENTICATED USER', { userId: req.user.id });
-        next();
-    });
-};
-
-// GET Budget Data using query string, e.g. /api/budget/get?user_id=123
+// GET Budget Data using query string
 app.get('/api/budget/get', authenticateToken, async (req, res) => {
     const userId = req.query.user_id || req.query.userId;
     logDebug('BUDGET GET USER', { userId });
@@ -326,7 +361,7 @@ app.get('/api/budget/get', authenticateToken, async (req, res) => {
     }
 });
 
-// GET Budget Data
+// GET Budget Data By Param
 app.get('/api/budget/:userId', authenticateToken, async (req, res) => {
     const userId = req.params.userId;
     logDebug('BUDGET LOAD USER', { userId });
